@@ -12,8 +12,11 @@
   Once you've finished working on something
   
     write that you finished it in the development log
-    $  git pull
     $  git add .
     $  git commit -m "title of commit goes here"
     $  git push
+    
+  To scrap what you've got and restart from the latest commit
+  
+    $  git checkout .
   
