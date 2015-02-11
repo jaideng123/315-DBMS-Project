@@ -7,19 +7,16 @@ using namespace std;
 
 class Attribute{
 public:
-	Attribute& operator=(const Attribute& rhs);
 	Attribute(){}
 	//constructors go here!
 
 	//needs set and get functions
-
+	Attribute& operator=(const Attribute& rhs){
+	name = rhs.name;
+	return *this;
+}
 private:
 	string type;
 	string name;
 };
-
-Attribute& Attribute::operator=(const Attribute& rhs){
-	name = rhs.name;
-	return *this;
-}
 #endif

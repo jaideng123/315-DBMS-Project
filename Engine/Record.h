@@ -7,18 +7,17 @@ using namespace std;
 
 class Record{
 public:
-	Record& operator=(const Record rhs);
 	Record(){}
 	//constructors go here!
 
 	//needs set and get functions
 
+	Record& operator=(const Record& rhs){
+		values = rhs.values;
+		return *this;
+	}
+
 private:
 	vector<string> values;
 };
-
-Record& Record::operator=(const Record rhs){
-	values = rhs.values;
-	return *this;
-}
 #endif

@@ -9,8 +9,10 @@ using namespace std;
 
 class Table{
 public:
-	Table& operator=(const Table& rhs);
-	Table(){}
+	Table& operator=(const Table&);
+	Table(string table_name){name = table_name;}
+	Table(string table_name, vector<Attribute> a);
+	Table(string table_name, vector<Attribute> attr, vector<Record> rec);
 	//constructors go here!
 
 	string get_name(){return name;}
@@ -34,14 +36,4 @@ private:
 
 
 };
-Table& Table::operator=(const Table& rhs){
-	name = rhs.name;
-	attributes.clear();
-	for(int i = 0; i<rhs.attributes.size();++i)
-		attributes.push_back(rhs.attributes[i]);
-	records.clear();
-	for(int i = 0; i<rhs.records.size();++i)
-		records.push_back(rhs.records[i]);
-	return *this;
-}
 #endif
