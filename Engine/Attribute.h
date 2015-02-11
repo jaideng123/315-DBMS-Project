@@ -7,10 +7,14 @@ using namespace std;
 
 class Attribute{
 public:
-	Attribute(){}
+	Attribute(string i_name, string i_type){
+		name = i_name;
+		type = i_type;
+	}
 	//constructors go here!
 
 	//needs set and get functions
+	string get_name(){return name;}
 	Attribute& operator=(const Attribute& rhs){
 	name = rhs.name;
 	return *this;
