@@ -19,4 +19,13 @@
   To scrap what you've got and restart from the latest commit
   
     $  git checkout .
-  
+
+## Coding Style:
+```
+  int example_function(int arg2, int arg1){
+    if(true == true)
+      //1 line code here
+    if(true == false){
+      //2+ line code here
+    }
+  }
