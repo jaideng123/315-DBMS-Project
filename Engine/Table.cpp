@@ -50,3 +50,15 @@ void Table::remove_attribute(int index){
 void Table::remove_record(int i){
 	records.erase(records.begin() + i);
 }
+
+void Table::print(){
+	for (int i = 0; i < attributes.size(); ++i){
+		cout<<attributes[i].get_name()<<"(";
+		cout<<attributes[i].get_type()<<")|";
+	}
+	for (int i = 0; i < records.size(); ++i){
+		for(int j = 0; i < attributes.size(); ++j){
+			//cout<<records[i].get_entry(i)<<"|";
+		}
+	}
+}

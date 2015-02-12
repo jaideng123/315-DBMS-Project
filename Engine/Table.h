@@ -31,6 +31,8 @@ public:
 	void add_record(Record new_record){records.push_back(new_record);}
 	void remove_record(int i);
 
+	void print();
+
 	Table& operator=(const Table&);
 
 private:
