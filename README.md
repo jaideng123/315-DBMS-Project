@@ -34,3 +34,6 @@
 * use underscores for names
 * follow bracing in example
 * minimize use of c++11/14 functions
+
+##Directory for .db files
+  The directory for the .db files will be named Databases
