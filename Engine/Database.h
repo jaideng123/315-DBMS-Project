@@ -29,6 +29,9 @@ public:
 	Table set_product(Table t1,Table t2){} //combine Attributes and Records
 	Table set_project(Table t1, vector<string> attribute_names){}//select only certain attributes
 	Table set_rename(Table t1, vector<string> attribute_names){}//rename all attributes
+	
+	//need function to test union compatability
+	//union compatible = same exact set of attributes
 
 };
 #endif
