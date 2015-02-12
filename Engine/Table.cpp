@@ -40,8 +40,13 @@ void Table::add_attribute(Attribute attr){
 	for(int i = 0; i < records.size(); ++i)
 		records[i].add_entry("NULL");
 }
+
 void Table::remove_attribute(int index){
 	attributes.erase(attributes.begin() + index);
 	for(int i = 0; i < records.size(); ++i)
 		records[i].remove_entry(index);
+}
+
+void Table::remove_record(int i){
+	records.erase(records.begin() + i);
 }

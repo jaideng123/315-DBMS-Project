@@ -9,15 +9,14 @@ using namespace std;
 
 class Table{
 public:
-	Table& operator=(const Table&);
 	Table(string table_name){name = table_name;}
 	Table(string table_name, vector<Attribute> attr);
 	Table(string table_name, vector<Attribute> attr, vector<Record> rec);
-	//constructors go here!
 
 	string get_name(){return name;}
 	void set_name(string new_name){name = new_name;}
 
+	//attribute functions
 	vector<Attribute> get_attributes(){ return attributes;}
 	void set_attributes(vector<Attribute> new_attributes){attributes = new_attributes;}
 	Attribute get_attribute(int i){return attributes[i];}
@@ -25,11 +24,14 @@ public:
 	void add_attribute(Attribute attr);
 	void remove_attribute(int index);
 
+	//record functions
 	vector<Record> get_records(){return records;}
 	Record get_record(int i){return records[i];}
 	void set_records(vector<Record> new_records);
 	void add_record(Record new_record){records.push_back(new_record);}
-	void remove_record(int i){}
+	void remove_record(int i);
+
+	Table& operator=(const Table&);
 
 private:
 	string name;

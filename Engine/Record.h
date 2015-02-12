@@ -8,6 +8,7 @@ using namespace std;
 class Record{
 public:
 	Record(){}
+	Record(vector<string> r){values = r;}
 	//constructors go here!
 
 	//needs set and get functions
