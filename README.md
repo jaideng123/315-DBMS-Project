@@ -20,12 +20,17 @@
   
     $  git checkout .
 
-## Coding Style:
+## Coding Style guidelines:
 ```
   int example_function(int arg2, int arg1){
     if(true == true)
       //1 line code here
     if(true == false){
       //2+ line code here
+      //2+ line code here
     }
   }
+```
+* use underscores for names
+* follow bracing in example
+* minimize use of c++11/14 functions
