@@ -14,7 +14,7 @@ public:
 	//needs set and get functions
 	vector<string> get_values(){return values;}
 
-	string get_val(int index){
+	string get_entry(int index){
 		return values[index];
 	}
 

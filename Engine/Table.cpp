@@ -58,7 +58,7 @@ void Table::print(){
 	}
 	for (int i = 0; i < records.size(); ++i){
 		for(int j = 0; i < attributes.size(); ++j){
-			//cout<<records[i].get_entry(i)<<"|";
+			cout<<records[i].get_entry(i)<<"|";
 		}
 	}
 }
