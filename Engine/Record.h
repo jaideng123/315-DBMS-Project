@@ -12,6 +12,14 @@ public:
 	//constructors go here!
 
 	//needs set and get functions
+	vector<string> get_values(){return values;}
+
+	string get_val(int index){
+		return values[index];
+	}
+
+	void set_val(vector<string> r){values = r;}
+
 
 	Record& operator=(const Record& rhs){
 		values = rhs.values;

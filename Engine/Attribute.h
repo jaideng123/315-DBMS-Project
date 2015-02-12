@@ -15,10 +15,12 @@ public:
 
 	//needs set and get functions
 	string get_name(){return name;}
+	string get_type(){return type;}
 	Attribute& operator=(const Attribute& rhs){
-	name = rhs.name;
-	return *this;
-}
+		name = rhs.name;
+		type = rhs.type;
+		return *this;
+	}
 private:
 	string type;
 	string name;
