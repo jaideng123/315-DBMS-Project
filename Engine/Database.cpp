@@ -53,6 +53,40 @@ void Database::show(string table_name){
 	}
 }
 
+//no need to copy in to a table, just deletes the record
+void Database::delete_records(string table_name,vector<int> to_remove){
+	
+	if(table_exists(table_name)){
+		for(int i = 0; i < to_remove.size(); i++){
+			if(to_remove[i] < find_table(table_name)->rec_size()){
+				find_table(table_name)->remove_record(to_remove[i]);
+				for(int j = 0; j < to_remove.size(); j++)
+				{
+					if(to_remove[j] > to_remove[i])
+						to_remove[j]--;
+				}
+			}
+		}
+	}
+}
+
+//another way to do it: copies data into a table and returns it
+// Table Database::delete_records(string table_name, vector<int> to_remove){
+	
+// 	Table temp("hello");
+// 	if(table_exists(table_name)){	
+
+// 		for(int i = 0; i < to_remove.size(); i++){
+// 			find_table(table_name)->remove_record(to_remove[i]);
+// 		}
+// 		for(int i = 0; i < find_table(table_name)->rec_size(); i++){
+
+// 			temp.add_record(find_table(table_name)->get_record(i));
+// 		}
+// 	}
+// 	return temp;
+// }
+
 
 void Database::get_attributes_from_file(ifstream &input,vector<Attribute> &attributes) {
 	
