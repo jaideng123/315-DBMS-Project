@@ -23,7 +23,7 @@ public:
 	void insert(string table_name, Record record);
 	void show(string table_name);
 	void update(string table_name,vector<Record> new_records,vector<int> old_records){}
-	void delete_records(string table_name,vector<int> old_records){}
+	void delete_records(string table_name,vector<int> old_records);
 
 	//Query functions
 	Table set_select(Table t1,vector<int> record_IDs){}
