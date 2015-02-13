@@ -15,7 +15,7 @@ public:
 	//Command functions
 	void open(string table_name){}
 	void close(string table_name){}
-	void write(string table_name){}
+	void write(string table_name);
 	void create(string table_name, vector<Attribute> v){}
 	void insert(string table_name, Record record){}
 	void show(string table_name){}
@@ -32,6 +32,10 @@ public:
 	
 	//need function to test union compatability
 	//union compatible = same exact set of attributes
+private:
+	//make sure you call this before you call find_table
+	bool table_exists(string table_name);
+	Table find_table(string table_name);
 
 };
 #endif
