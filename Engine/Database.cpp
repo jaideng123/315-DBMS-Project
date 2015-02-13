@@ -42,6 +42,12 @@ void Database::create(string table_name, vector<Attribute> v){
 	tables.push_back(Table(table_name, v));
 }
 
+void Database::insert(string table_name, Record record){
+	if(table_exists(table_name)){
+		find_table(table_name).add_record(record);
+	}
+}
+
 void Database::show(string table_name){
 	if(table_exists(table_name)){
 		find_table(table_name).print();
