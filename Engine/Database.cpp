@@ -9,7 +9,7 @@ void Database::write(string table_name){
 		return;
 	}
 
-	Table table = find_table(table_name);
+	Table table = *find_table(table_name);
 	string file_name = table_name + ".db";
 	ofstream my_file;
   	my_file.open(file_name.c_str());
@@ -44,13 +44,13 @@ void Database::create(string table_name, vector<Attribute> v){
 
 void Database::insert(string table_name, Record record){
 	if(table_exists(table_name)){
-		find_table(table_name).add_record(record);
+		find_table(table_name)->add_record(record);
 	}
 }
 
 void Database::show(string table_name){
 	if(table_exists(table_name)){
-		find_table(table_name).print();
+		find_table(table_name)->print();
 	}
 }
 
@@ -63,11 +63,12 @@ bool Database::table_exists(string table_name){
 	return false;
 }
 
-Table Database::find_table(string table_name){
+//returns pointer to Table
+Table * Database::find_table(string table_name){
 	for (int i = 0; i < tables.size(); ++i)
 	{
 		if(tables[i].get_name() == table_name)
-			return tables[i];
+			return &tables[i];
 	}
-	return Table("NULL");
+	return NULL;
 }
