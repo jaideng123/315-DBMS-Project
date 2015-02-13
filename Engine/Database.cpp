@@ -72,3 +72,20 @@ Table * Database::find_table(string table_name){
 	}
 	return NULL;
 }
+
+//union compatible = same set of attributes
+//used for union and difference
+bool union_compatible(Table t1, Table t2){
+	vector<Attribute> attr1 = t1.get_attributes();
+	vector<Attribute> attr2 = t2.get_attributes();
+	if(attr1.size() != attr2.size())
+		return false;
+	for (int i = 0; i < attr1.size(); ++i)
+	{
+		if(attr1[i].get_name() != attr2[i].get_name())
+			return false;
+		if(attr1[i].get_type() != attr2[i].get_type())
+			return false;
+	}
+	return true;
+}
