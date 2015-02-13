@@ -18,6 +18,10 @@ public:
 		return values[index];
 	}
 
+	int get_size(){
+		return values.size();
+	}
+
 	void set_val(vector<string> r){values = r;}
 
 
@@ -29,6 +33,7 @@ public:
 	void add_entry(string new_entry){
 		values.push_back(new_entry);
 	}
+	
 	void remove_entry(int index){
 		if(index >= 0 && index < values.size())
 			values.erase(values.begin() + index);

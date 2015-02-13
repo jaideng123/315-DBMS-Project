@@ -56,9 +56,11 @@ void Table::print(){
 		cout<<attributes[i].get_name()<<"(";
 		cout<<attributes[i].get_type()<<")|";
 	}
+	cout<<endl;
 	for (int i = 0; i < records.size(); ++i){
-		for(int j = 0; i < attributes.size(); ++j){
-			cout<<records[i].get_entry(i)<<"|";
+		for(int j = 0; j < attributes.size(); ++j){
+			cout<<records[i].get_entry(j)<<"|";
 		}
+		cout<<endl;
 	}
 }
