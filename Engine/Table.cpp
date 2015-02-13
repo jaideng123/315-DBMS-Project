@@ -52,6 +52,7 @@ void Table::remove_record(int i){
 }
 
 void Table::print(){
+	cout<<name<<endl;
 	for (int i = 0; i < attributes.size(); ++i){
 		cout<<attributes[i].get_name()<<"(";
 		cout<<attributes[i].get_type()<<")|";

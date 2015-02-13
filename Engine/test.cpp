@@ -4,7 +4,7 @@
 using namespace std;
 
 int main(){
-	Database db();
+	Database db;
 	vector<Attribute> attr;
 	attr.push_back(Attribute("ID","integer"));
 	attr.push_back(Attribute("Name","string"));
@@ -24,6 +24,8 @@ int main(){
 		test.add_record(r);
 	}
 	test.print();
+	db.tables.push_back(test); 
+	db.write("Test Table");
 
 	return 0;
 }

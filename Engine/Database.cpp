@@ -11,7 +11,7 @@ void Database::write(string table_name){
 	Table table = find_table(table_name);
 	string file_name = table_name + ".db";
 	ofstream my_file;
-  	my_file.open (file_name.c_str());
+  	my_file.open(file_name.c_str());
   	//print attributes
   	vector<Attribute> attr = table.get_attributes();
   	for (int i = 0; i < attr.size(); ++i)
