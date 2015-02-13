@@ -22,6 +22,7 @@ public:
 	Attribute get_attribute(int i){return attributes[i];}
 	Attribute get_attribute_by_name(string name);
 	void add_attribute(Attribute attr);
+	int att_size(){return attribute.size();}
 	void remove_attribute(int index);
 
 	//record functions
@@ -29,6 +30,7 @@ public:
 	Record get_record(int i){return records[i];}
 	void set_records(vector<Record> new_records);
 	void add_record(Record new_record){records.push_back(new_record);}
+	int rec_size(){return records.size();}
 	void remove_record(int i);
 
 	void print();

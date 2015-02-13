@@ -1,8 +1,7 @@
 #include "Database.h" 
-#include <iostream>
-#include <fstream>
 
 
+//Command functions
 void Database::write(string table_name){
 	if(!table_exists(table_name)){
 		cout<<"Error: Table not found\n";
@@ -54,6 +53,90 @@ void Database::show(string table_name){
 	}
 }
 
+
+void Database::get_attributes_from_file(ifstream &input,vector<Attribute> &attributes) {
+	
+	string attribute_line;
+	input>>attribute_line;
+	stringstream stream(attribute_line);
+	string attribute_pair ="";
+	//Parse first using ',' delimiter. 
+	while(getline ( stream, attribute_pair, ',')) {
+		stringstream attribute_string;
+		string attribute_name;
+		string type;
+		getline(attribute_string, attribute_name, '(');
+		getline(attribute_string, type);
+		Attribute attribute(attribute_name,type);
+		attributes.push_back(attribute);
+		
+	}
+}
+
+void Database::get_records_from_file(ifstream &input ,
+		vector<Record> &records, int num_attributes) 
+	{
+	
+	string record_line;
+	input>>record_line;
+	stringstream stream(record_line);
+	
+	//Parse first using ',' delimiter. 
+	while(!stream){
+		
+		vector<string> tuple_fromFile;
+		for(int i = 0; i < num_attributes; i++) {
+			string value ="";
+			getline ( stream, value, ',');
+			tuple_fromFile.push_back(value);
+		}
+		Record record(tuple_fromFile);
+		records.push_back(record);
+	 
+ 	}
+	
+}
+
+//Takes a .db file from DB folder and puts it into Main memory
+void Database::open(string table_name) {
+	ifstream myFile;
+	//Warning - Directory Path Hardcoded
+	string filename = "Databases/" +table_name+".db"; 
+	myFile.open(filename);
+	
+	if(!myFile) {
+		cout<<"Could find file!\n";
+	}
+	else {
+		//Get first line containing attributes
+		vector<Attribute> attributes1;
+		vector<Record> records;
+		get_attributes_from_file(myFile, attributes1);
+		//Get records
+		get_records_from_file(myFile,records,attributes1.size());
+		Table from_file(table_name,attributes1,records);
+		this->tables.push_back(from_file);
+	}
+}
+
+
+
+
+//Query functions
+//NOT DONE
+// Table Database::set_union(Table t1, Table t2){
+// 	Table union("set_union");
+// 	//adding attributes
+// 	int t1_attSize = t1.att_size();
+// 	int t2_attSize = t2.att_size();
+// 	for(int i = 0; i < t1_attSize; i++){
+// 		for(int j = 0; j < t2_attSize; j++){
+// 			if(t1.get)	
+// 		}
+// 	}
+// }
+
+//private functions
 bool Database::table_exists(string table_name){
 	for (int i = 0; i < tables.size(); ++i)
 	{

@@ -5,6 +5,9 @@
 #include "Attribute.h"
 #include <string>
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 class Database{
@@ -30,6 +33,11 @@ public:
 	Table set_project(Table t1, vector<string> attribute_names){}//select only certain attributes
 	Table set_rename(Table t1, vector<string> attribute_names){}//rename all attributes
 	
+	//Helper Functions
+	void get_attributes_from_file(ifstream &input,vector<Attribute> &attributes); 
+	void get_records_from_file(ifstream &input ,
+		vector<Record> &records, int num_attributes);
+
 	//need function to test union compatability
 	//union compatible = same exact set of attributes
 
