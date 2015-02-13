@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 
+
 void Database::write(string table_name){
 	if(!table_exists(table_name)){
 		cout<<"Error: Table not found\n";
@@ -35,6 +36,10 @@ void Database::write(string table_name){
   	my_file.close();
   	return;
 
+}
+
+void Database::create(string table_name, vector<Attribute> v){
+	tables.push_back(Table(table_name, v));
 }
 
 bool Database::table_exists(string table_name){
