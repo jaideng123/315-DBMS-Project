@@ -22,7 +22,7 @@ public:
 	Attribute get_attribute(int i){return attributes[i];}
 	Attribute get_attribute_by_name(string name);
 	void add_attribute(Attribute attr);
-	int att_size(){return attribute.size();}
+	int att_size(){return attributes.size();}
 	void remove_attribute(int index);
 
 	//record functions

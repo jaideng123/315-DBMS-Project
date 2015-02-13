@@ -136,11 +136,41 @@ void Database::open(string table_name) {
 // 	}
 // }
 
-//private functions
+//
+Table Database::set_difference(Table t1, Table t2){
+	Table diff(t1.get_name());
+	for (int i = 0; i < t1.get_records().size(); ++i)
+	{
+		if(!record_exists(t2,t1.get_records()[i]))
+			diff.add_record(t1.get_records()[i]);
+	}
+	return diff;
+}
+
+//******************
+//private functions*
+//******************
 bool Database::table_exists(string table_name){
 	for (int i = 0; i < tables.size(); ++i)
 	{
 		if(tables[i].get_name() == table_name)
+			return true;
+	}
+	return false;
+}
+
+//checks if a record exists in a table
+bool Database::record_exists(Table t1, Record rec){
+	vector<Record> records = t1.get_records();
+	for (int i = 0; i < records.size(); ++i)
+	{
+		bool match = true;
+		for (int j = 0; j < rec.get_size(); ++j)
+		{
+			if(rec.get_entry(j) != records[i].get_entry(j))
+				match = false;
+		}
+		if(match == true)
 			return true;
 	}
 	return false;
