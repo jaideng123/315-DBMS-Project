@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 
-
+//Command functions
 void Database::write(string table_name){
 	if(!table_exists(table_name)){
 		cout<<"Error: Table not found\n";
@@ -54,6 +54,21 @@ void Database::show(string table_name){
 	}
 }
 
+//Query functions
+//NOT DONE
+// Table Database::set_union(Table t1, Table t2){
+// 	Table union("set_union");
+// 	//adding attributes
+// 	int t1_attSize = t1.att_size();
+// 	int t2_attSize = t2.att_size();
+// 	for(int i = 0; i < t1_attSize; i++){
+// 		for(int j = 0; j < t2_attSize; j++){
+// 			if(t1.get)	
+// 		}
+// 	}
+// }
+
+//private functions
 bool Database::table_exists(string table_name){
 	for (int i = 0; i < tables.size(); ++i)
 	{
