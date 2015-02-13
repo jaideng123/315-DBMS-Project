@@ -40,8 +40,10 @@ public:
 
 	//need function to test union compatability
 	//union compatible = same exact set of attributes
+
 private:
 	//make sure you call this before you call find_table
+	bool union_compatible(Table t1, Table t2);
 	bool table_exists(string table_name);
 	Table * find_table(string table_name);
 
