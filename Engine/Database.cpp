@@ -54,7 +54,8 @@ void Database::write(string table_name){
 	string file_name = FILEPATH + table_name + ".db";
 	ofstream my_file;
   	my_file.open(file_name.c_str());
-  	//print attributes
+
+  	//write attributes
   	vector<Attribute> attr = table.get_attributes();
   	for (int i = 0; i < attr.size(); ++i){
   		my_file<<attr[i].get_name()<<"("<<attr[i].get_type()<<")";
@@ -62,7 +63,8 @@ void Database::write(string table_name){
   			my_file<<",";
   	}
   	my_file<<endl;
-  	//print actual records
+
+  	//write records
 	vector<Record> rec = table.get_records();
 	for (int i = 0; i < rec.size(); ++i){
   		for (int j = 0; j < rec[i].get_size(); ++j){
@@ -79,7 +81,10 @@ void Database::write(string table_name){
 
 //create a new table and insert it into tables
 void Database::create(string table_name, vector<Attribute> v){
-	tables.push_back(Table(table_name, v));
+	if(!table_exists(table_name))
+		tables.push_back(Table(table_name, v));
+	else
+		cout<<"Error: Table already exists in database\n";
 }
 
 //insert a record into a table in tables
@@ -87,6 +92,8 @@ void Database::insert(string table_name, Record record){
 	if(table_exists(table_name)){
 		find_table(table_name)->add_record(record);
 	}
+	else
+		cout<<"Error: Table not found\n";
 }
 
 //prints table
@@ -95,14 +102,15 @@ void Database::show(string table_name){
 		find_table(table_name)->print();
 	}
 	else
-		cout<<"Error: Table not found!"<<endl;
+		cout<<"Error: Table not found\n";
 }
 
 
 // copies records out of a table then over writes it
 void Database::delete_records(string table_name, vector<int> to_remove){
 	if(!table_exists(table_name)){	
- 		cout<<"Error: Table does not exist\n";
+ 		cout<<"Error: Table not found\n";
+ 		return;
  	}
 	vector<Record> rec;
 	Table * table = find_table(table_name);
@@ -126,6 +134,8 @@ void Database::delete_records(string table_name, vector<int> to_remove){
 			find_table(table_name)->set_record(old_records[i], new_records[i]);
 		}
 	}
+	else
+		cout<<"Error: Table not found\n";
 
 }
 
@@ -147,14 +157,16 @@ Table Database::set_union(Table t1, Table t2){
 		return sunion;
 	}
 	else
-		cout<<"Sets are incompatible"<<endl;
+		cout<<"Error: Sets are incompatible\n";
 	return Table("NULL");
 }
 
 //everything in t1 that is not in t2
 Table Database::set_difference(Table t1, Table t2){
-	if(!union_compatible(t1,t2))
+	if(!union_compatible(t1,t2)){
+		cout<<"Error: Sets are incompatible\n";
 		return Table("NULL");
+	}
 	Table diff = Table(t1.get_name());
 	for (int i = 0; i < t1.get_records().size(); ++i)
 	{
@@ -167,8 +179,6 @@ Table Database::set_difference(Table t1, Table t2){
 //combine Attributes and Records
 Table Database::set_product(Table t1, Table t2){
 	Table prod(t1.get_name());
-
-
 	prod.set_attributes(t1.get_attributes());
 
 	for(int i = 0; i< t2.get_attributes().size(); i++){
@@ -217,7 +227,6 @@ Table Database::set_project(Table t1, vector<string> attrs){
 
 //rename all attributes
 Table Database::set_rename(Table t1, vector<string> attribute_names){
-
 	Table new_table = t1;
 	vector<Attribute> new_attrs;
 	vector<Attribute> old_attrs = t1.get_attributes();
