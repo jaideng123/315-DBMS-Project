@@ -93,19 +93,20 @@ void Database::delete_records(string table_name,vector<int> to_remove){
 void Database::get_attributes_from_file(ifstream &input,vector<Attribute> &attributes) {
 	
 	string attribute_line;
-	input>>attribute_line;
+	getline(input, attribute_line);
+
 	stringstream stream(attribute_line);
 	string attribute_pair ="";
 	//Parse first using ',' delimiter. 
 	while(getline ( stream, attribute_pair, ',')) {
-		stringstream attribute_string;
+		stringstream attribute_string(attribute_pair);
 		string attribute_name;
 		string type;
 		getline(attribute_string, attribute_name, '(');
 		getline(attribute_string, type);
+		type = type.substr(0,type.size()-1);
 		Attribute attribute(attribute_name,type);
 		attributes.push_back(attribute);
-		
 	}
 }
 
@@ -114,12 +115,12 @@ void Database::get_records_from_file(ifstream &input ,
 	{
 	
 	string record_line;
-	input>>record_line;
-	stringstream stream(record_line);
+	
+	
 	
 	//Parse first using ',' delimiter. 
-	while(!stream){
-		
+	while(getline(input, record_line)){
+		stringstream stream(record_line);
 		vector<string> tuple_fromFile;
 		for(int i = 0; i < num_attributes; i++) {
 			string value ="";
@@ -150,7 +151,9 @@ void Database::open(string table_name) {
 		get_attributes_from_file(myFile, attributes1);
 		//Get records
 		get_records_from_file(myFile,records,attributes1.size());
+
 		Table from_file(table_name,attributes1,records);
+		
 		this->tables.push_back(from_file);
 	}
 }
