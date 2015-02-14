@@ -66,7 +66,7 @@ void Table::print(){
 	}
 }
 
-
+//overloading the assignment operator for the table class
 Table& Table::operator=(const Table& rhs){
 	name = rhs.name;
 	attributes = rhs.attributes;
