@@ -7,37 +7,33 @@ using namespace std;
 
 class Record{
 public:
+
+	//constructors
+	
 	Record(){}
 	Record(vector<string> r){values = r;}
-	//constructors go here!
 
-	//needs set and get functions
+	//get + set functions
+	
 	vector<string> get_values() const {return values;}
-
-	string get_entry(int index){
-		return values[index];
-	}
-
-	int get_size() const {
-		return values.size();
-	}
-
+	string get_entry(int index){return values[index];}
+	int get_size() const {return values.size();}
 	void set_val(vector<string> r){values = r;}
-
-
+	
+	//entry functions
+	
+	void add_entry(string new_entry){values.push_back(new_entry);}
+	void remove_entry(int index){
+		if(index >= 0 && index < values.size())
+			values.erase(values.begin() + index);
+	}
+	
+	
 	Record& operator=(const Record& rhs){
 		values = rhs.values;
 		return *this;
 	}
 
-	void add_entry(string new_entry){
-		values.push_back(new_entry);
-	}
-	
-	void remove_entry(int index){
-		if(index >= 0 && index < values.size())
-			values.erase(values.begin() + index);
-	}
 
 private:
 	vector<string> values;
