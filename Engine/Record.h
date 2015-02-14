@@ -1,5 +1,6 @@
 #ifndef _record_h_                   // include file only once
 #define _record_h_
+
 #include <string>
 #include <vector>
 

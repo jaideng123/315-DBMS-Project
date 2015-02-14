@@ -1,5 +1,6 @@
 #ifndef _database_h_                   // include file only once
 #define _database_h_
+
 #include "Table.h"
 #include "Record.h"
 #include "Attribute.h"
@@ -8,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
 using namespace std;
 
 class Database{

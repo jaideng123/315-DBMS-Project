@@ -1,5 +1,6 @@
 #ifndef _attr_h_                   // include file only once
 #define _attr_h_
+
 #include <string>
 #include <vector>
 
@@ -7,13 +8,16 @@ using namespace std;
 
 class Attribute{
 public:
+
+	//constructors
+	
 	Attribute(string i_name, string i_type){
 		name = i_name;
 		type = i_type;
 	}
-	//constructors go here!
 
-	//needs set and get functions
+	//set and get functions
+	
 	string get_name() const {return name;}
 	string get_type() const {return type;}
 	Attribute& operator=(const Attribute& rhs){

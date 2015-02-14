@@ -44,6 +44,7 @@ void Database::close(string table_name) {
 
 }
 
+//write table to disk
 void Database::write(string table_name){
 	if(!table_exists(table_name)){
 		cout<<"Error: Table not found\n";
@@ -56,8 +57,7 @@ void Database::write(string table_name){
   	my_file.open(file_name.c_str());
   	//print attributes
   	vector<Attribute> attr = table.get_attributes();
-  	for (int i = 0; i < attr.size(); ++i)
-  	{
+  	for (int i = 0; i < attr.size(); ++i){
   		my_file<<attr[i].get_name()<<"("<<attr[i].get_type()<<")";
   		if(i != attr.size()-1)
   			my_file<<",";
@@ -76,19 +76,21 @@ void Database::write(string table_name){
   	}
   	my_file.close();
   	return;
-
 }
 
+//create a new table and insert it into tables
 void Database::create(string table_name, vector<Attribute> v){
 	tables.push_back(Table(table_name, v));
 }
 
+//insert a record into a table in tables
 void Database::insert(string table_name, Record record){
 	if(table_exists(table_name)){
 		find_table(table_name)->add_record(record);
 	}
 }
 
+//prints table
 void Database::show(string table_name){
 	if(table_exists(table_name)){
 		find_table(table_name)->print();
@@ -98,7 +100,7 @@ void Database::show(string table_name){
 }
 
 
-// copies data out of a table then over writes it
+// copies records out of a table then over writes it
 void Database::delete_records(string table_name, vector<int> to_remove){
 	if(!table_exists(table_name)){	
  		cout<<"Error: Table does not exist\n";
@@ -123,6 +125,7 @@ void Database::delete_records(string table_name, vector<int> to_remove){
 //Query functions*
 //****************
 
+//everything in t1  + everything in t2 not in t1
 Table Database::set_union(Table t1, Table t2){
 	if(union_compatible(t1, t2))
 	{
@@ -140,7 +143,7 @@ Table Database::set_union(Table t1, Table t2){
 	return Table("NULL");
 }
 
-//
+//everything in t1 that is not in t2
 Table Database::set_difference(Table t1, Table t2){
 	if(!union_compatible(t1,t2))
 		return Table("NULL");
@@ -153,6 +156,7 @@ Table Database::set_difference(Table t1, Table t2){
 	return diff;
 }
 
+//combine Attributes and Records
 Table Database::set_product(Table t1, Table t2){
 	Table prod(t1.get_name());
 
