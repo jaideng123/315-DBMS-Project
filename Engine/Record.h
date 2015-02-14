@@ -12,13 +12,13 @@ public:
 	//constructors go here!
 
 	//needs set and get functions
-	vector<string> get_values(){return values;}
+	vector<string> get_values() const {return values;}
 
 	string get_entry(int index){
 		return values[index];
 	}
 
-	int get_size(){
+	int get_size() const {
 		return values.size();
 	}
 
@@ -42,4 +42,14 @@ public:
 private:
 	vector<string> values;
 };
+
+bool operator==(const Record& lhs, const Record& rhs){
+		if(lhs.get_size() != rhs.get_size())
+			for(int i = lhs.get_values().size(); i > 0; i--)
+			{
+				if(lhs.get_values()[i] != rhs.get_values()[i])
+					return false;
+			}
+			return true;
+}
 #endif
