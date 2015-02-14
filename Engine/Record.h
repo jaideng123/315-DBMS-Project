@@ -44,12 +44,14 @@ private:
 };
 
 inline bool operator==(const Record& lhs, const Record& rhs){
-		if(lhs.get_size() != rhs.get_size())
+		if(lhs.get_size() == rhs.get_size()){
 			for(int i = lhs.get_values().size(); i > 0; i--)
 			{
 				if(lhs.get_values()[i] != rhs.get_values()[i])
 					return false;
 			}
 			return true;
+		}
+		return false;
 }
 #endif

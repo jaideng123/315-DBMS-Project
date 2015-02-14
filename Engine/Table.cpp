@@ -4,6 +4,8 @@
 
 using namespace std;
 
+//constructors
+
 Table::Table(string table_name, vector<Attribute> attr){
 	name = table_name;
 	attributes = attr;
@@ -15,16 +17,7 @@ Table::Table(string table_name, vector<Attribute> attr, vector<Record> rec){
 	records = rec;
 }
 
-Table& Table::operator=(const Table& rhs){
-	name = rhs.name;
-	attributes = rhs.attributes;
-	records = rhs.records;
-	return *this;
-}
-
-void Table::set_records(vector<Record> new_records){
-	records = new_records;
-}
+//attribute functions
 
 Attribute Table::get_attribute_by_name(string name){
 	for(int i = 0; i<attributes.size(); ++i){
@@ -47,10 +40,17 @@ void Table::remove_attribute(int index){
 		records[i].remove_entry(index);
 }
 
+//record functions
+
+void Table::set_records(vector<Record> new_records){
+	records = new_records;
+}
+
 void Table::remove_record(int i){
 	records.erase(records.begin() + i);
 }
 
+//prints table to screen
 void Table::print(){
 	cout<<name<<endl;
 	for (int i = 0; i < attributes.size(); ++i){
@@ -64,4 +64,12 @@ void Table::print(){
 		}
 		cout<<endl;
 	}
+}
+
+
+Table& Table::operator=(const Table& rhs){
+	name = rhs.name;
+	attributes = rhs.attributes;
+	records = rhs.records;
+	return *this;
 }

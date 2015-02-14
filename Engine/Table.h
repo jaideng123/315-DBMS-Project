@@ -9,10 +9,12 @@ using namespace std;
 
 class Table{
 public:
+	//constructors
 	Table(string table_name){name = table_name;}
 	Table(string table_name, vector<Attribute> attr);
 	Table(string table_name, vector<Attribute> attr, vector<Record> rec);
 
+	//name functions
 	string get_name(){return name;}
 	void set_name(string new_name){name = new_name;}
 
@@ -33,6 +35,7 @@ public:
 	int rec_size(){return records.size();}
 	void remove_record(int i);
 
+	//prints table to screen
 	void print();
 
 	Table& operator=(const Table&);
@@ -44,6 +47,7 @@ private:
 
 
 };
+
 
 inline bool operator==(const Table& lhs, const Table& rhs){
 	if(lhs.get_records() == rhs.get_records())
