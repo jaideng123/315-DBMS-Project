@@ -174,7 +174,7 @@ void Database::open(string table_name) {
 Table Database::set_difference(Table t1, Table t2){
 	if(!union_compatible(t1,t2))
 		return Table("NULL");
-	Table diff(t1.get_name());
+	Table diff = Table(t1.get_name());
 	for (int i = 0; i < t1.get_records().size(); ++i)
 	{
 		if(!record_exists(t2,t1.get_records()[i]))
@@ -224,7 +224,7 @@ Table * Database::find_table(string table_name){
 
 //union compatible = same set of attributes
 //used for union and difference
-bool union_compatible(Table t1, Table t2){
+bool Database::union_compatible(Table t1, Table t2){
 	vector<Attribute> attr1 = t1.get_attributes();
 	vector<Attribute> attr2 = t2.get_attributes();
 	if(attr1.size() != attr2.size())
