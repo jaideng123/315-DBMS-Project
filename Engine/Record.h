@@ -23,13 +23,18 @@ public:
 	
 	//entry functions
 	
-	void add_entry(string new_entry){values.push_back(new_entry);}
+	//adds a entry
+	void add_entry(string new_entry){
+		values.push_back(new_entry);
+	}
+	
+	//removes entry
 	void remove_entry(int index){
 		if(index >= 0 && index < values.size())
 			values.erase(values.begin() + index);
 	}
 	
-	
+	//overloading assignment operator for record class
 	Record& operator=(const Record& rhs){
 		values = rhs.values;
 		return *this;
@@ -40,6 +45,7 @@ private:
 	vector<string> values;
 };
 
+//overloading assignment operator for record class
 inline bool operator==(const Record& lhs, const Record& rhs){
 		if(lhs.get_size() == rhs.get_size()){
 			for(int i = lhs.get_values().size(); i > 0; i--)
