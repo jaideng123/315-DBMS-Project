@@ -195,7 +195,7 @@ Table Database::set_union(Table t1, Table t2){
 	}
 	else
 		cout<<"Sets are incompatible"<<endl;
-	return NULL;
+	return Table("NULL");
 }
 
 //
@@ -219,19 +219,19 @@ Table Database::set_product(Table t1, Table t2){
 
 	for(int i = 0; i< t2.get_attributes().size(); i++){
 		for(int j = 0; j < t1.get_attributes().size(); j++){
-			if(t2.get_attribute(i)==t1.get_attribute(j)
+			if(t2.get_attribute(i)==t1.get_attribute(j))
 				break;
 			if(j == t1.get_attributes().size()-1)
-				prod.add_attribute(t2.get_attribute(i))
+				prod.add_attribute(t2.get_attribute(i));
 		}
 	}
 	prod.set_records(t1.get_records());
 	for(int i = 0; i< t2.get_records().size(); i++){
 		for(int j = 0; j < t1.get_records().size(); j++){
-			if(t2.get_record(i)==t1.get_record(j)
+			if(t2.get_record(i)==t1.get_record(j))
 				break;
-			if(j == t1.get_record().size()-1)
-				prod.add_record(t2.get_record(i))
+			if(j == t1.get_records().size()-1)
+				prod.add_record(t2.get_record(i));
 		}
 	}
 }

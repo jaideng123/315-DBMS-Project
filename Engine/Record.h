@@ -43,7 +43,7 @@ private:
 	vector<string> values;
 };
 
-bool operator==(const Record& lhs, const Record& rhs){
+inline bool operator==(const Record& lhs, const Record& rhs){
 		if(lhs.get_size() != rhs.get_size())
 			for(int i = lhs.get_values().size(); i > 0; i--)
 			{

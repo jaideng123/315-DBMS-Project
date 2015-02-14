@@ -27,7 +27,7 @@ private:
 	string name;
 };
 
-bool operator==(const Attribute& lhs, const Attribute& rhs){
+inline bool operator==(const Attribute& lhs, const Attribute& rhs){
 		if(lhs.get_name() == rhs.get_name())
 			if(lhs.get_type() == rhs.get_type())
 				return true;

@@ -45,7 +45,7 @@ private:
 
 };
 
-bool operator==(const Table& lhs, const Table& rhs){
+inline bool operator==(const Table& lhs, const Table& rhs){
 	if(lhs.get_records() == rhs.get_records())
 		if(lhs.get_attributes() == rhs.get_attributes())
 			return true;
