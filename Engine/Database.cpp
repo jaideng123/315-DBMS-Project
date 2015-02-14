@@ -119,7 +119,16 @@ void Database::delete_records(string table_name, vector<int> to_remove){
  	table->set_records(rec);
  }
 
+ void Database::update(string table_name,vector<Record> new_records,vector<int> old_records){
 
+	if(table_exists(table_name)){
+
+		for(int i = 0; i < new_records.size(); i++){
+			find_table(table_name)->set_record(old_records[i], new_records[i]);
+		}
+	}
+
+}
 
 //****************
 //Query functions*
