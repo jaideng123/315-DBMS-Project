@@ -182,6 +182,7 @@ Table Database::set_product(Table t1, Table t2){
 	}
 }
 
+//select only certain attributes
 Table Database::set_project(Table t1, vector<string> attrs){
 	Table new_table(t1.get_name());
 	vector<int> rows;
