@@ -51,6 +51,8 @@ void Database::show(string table_name){
 	if(table_exists(table_name)){
 		find_table(table_name)->print();
 	}
+	else
+		cout<<"Error: Table not found!"<<endl;
 }
 
 //no need to copy in to a table, just deletes the record

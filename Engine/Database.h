@@ -12,9 +12,11 @@ using namespace std;
 
 class Database{
 public:
+	//constructors
 	Database(){}
-	//constructors go here!
+
 	vector<Table> tables;
+
 	//Command functions
 	void open(string table_name);
 	void close(string table_name);
