@@ -10,6 +10,8 @@
 #include <fstream>
 #include <sstream>
 
+#define FILEPATH "Databases/"
+
 using namespace std;
 
 class Database{

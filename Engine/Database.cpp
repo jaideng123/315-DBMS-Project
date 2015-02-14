@@ -7,8 +7,7 @@
 //Takes a .db file from DB folder and puts it into Main memory
 void Database::open(string table_name) {
 	ifstream myFile;
-	//Warning - Directory Path Hardcoded
-	string filename = "Databases/" +table_name+".db"; 
+	string filename = FILEPATH +table_name+".db"; 
 	myFile.open(filename);
 	
 	if(!myFile) {
@@ -52,7 +51,7 @@ void Database::write(string table_name){
 	}
 
 	Table table = *find_table(table_name);
-	string file_name ="Databases/" + table_name + ".db";
+	string file_name = FILEPATH + table_name + ".db";
 	ofstream my_file;
   	my_file.open(file_name.c_str());
   	//print attributes
@@ -216,24 +215,18 @@ Table Database::set_project(Table t1, vector<string> attrs){
 
 }
 
-//not done yet
+//rename all attributes
 Table Database::set_rename(Table t1, vector<string> attribute_names){
 
-	Table new_table(t1.get_name());
+	Table new_table = t1;
 	vector<Attribute> new_attrs;
+	vector<Attribute> old_attrs = t1.get_attributes();
 
-	for(int i = 0; i < attributes_names.size(); i++){
-		new_attrs.push_back(attributes_names[i]);
+	for (int i = 0; i < old_attrs.size(); ++i){
+		new_attrs.push_back(Attribute(attribute_names[i],old_attrs[i].get_type()));
 	}
 
-	vector<Record> new_rec;
-	for (int i = 0; i < t1.get_records().size(); ++i){
-		Record temp;
-		for (int j = 0; j < rows.size(); ++j){
-			temp.add_entry(t1.get_record(i).get_entry(rows[j]));
-		}
-		new_rec.push_back(temp);
-	}
+	new_table.set_attributes(new_attrs);
 	return new_table;
 }
 
