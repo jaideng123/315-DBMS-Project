@@ -56,6 +56,8 @@ void Database::show(string table_name){
 }
 
 //no need to copy in to a table, just deletes the record
+//remove shifts all elements down which will throw off the next remove call
+/*
 void Database::delete_records(string table_name,vector<int> to_remove){
 	
 	if(table_exists(table_name)){
@@ -71,23 +73,26 @@ void Database::delete_records(string table_name,vector<int> to_remove){
 		}
 	}
 }
+*/
 
-//another way to do it: copies data into a table and returns it
-// Table Database::delete_records(string table_name, vector<int> to_remove){
-	
-// 	Table temp("hello");
-// 	if(table_exists(table_name)){	
-
-// 		for(int i = 0; i < to_remove.size(); i++){
-// 			find_table(table_name)->remove_record(to_remove[i]);
-// 		}
-// 		for(int i = 0; i < find_table(table_name)->rec_size(); i++){
-
-// 			temp.add_record(find_table(table_name)->get_record(i));
-// 		}
-// 	}
-// 	return temp;
-// }
+// copies data out of a table then over writes it
+void Database::delete_records(string table_name, vector<int> to_remove){
+	if(!table_exists(table_name)){	
+ 		cout<<"Error: Table does not exist\n";
+ 	}
+	vector<Record> rec;
+	Table * table = find_table(table_name);
+	for(int i = 0; i < table->rec_size(); i++){
+		bool found = false;
+ 		for (int j = 0; j < to_remove.size(); ++j){
+ 			if (to_remove[j] == i)
+ 				found = true;
+ 		}
+ 		if (!found)
+ 			rec.push_back(table->get_record(i));
+ 	}
+ 	table->set_records(rec);
+ }
 
 
 void Database::get_attributes_from_file(ifstream &input,vector<Attribute> &attributes) {
