@@ -236,6 +236,30 @@ Table Database::set_product(Table t1, Table t2){
 	}
 }
 
+Table Database::set_project(Table t1, vector<string> attrs){
+	Table new_table(t1.get_name());
+	vector<int> rows;
+	vector<Attribute> new_attrs;
+	for (int i = 0; i < attrs.size(); ++i){
+		for (int j = 0; j < t1.get_attributes().size(); ++j){
+			if (t1.get_attributes()[j].get_name() == attrs[i] ){
+				new_attrs.push_back(t1.get_attributes()[j]);
+				rows.push_back(j);
+			}
+		}
+	}
+	vector<Record> new_rec;
+	for (int i = 0; i < t1.get_records().size(); ++i){
+		Record temp;
+		for (int j = 0; j < rows.size(); ++j){
+			temp.add_entry(t1.get_record(i).get_entry(rows[j]));
+		}
+		new_rec.push_back(temp);
+	}
+	return new_table;
+
+}
+
 
 //******************
 //private functions*
