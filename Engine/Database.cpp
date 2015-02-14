@@ -172,6 +172,8 @@ void Database::open(string table_name) {
 
 //
 Table Database::set_difference(Table t1, Table t2){
+	if(!union_compatible(t1,t2))
+		return Table("NULL");
 	Table diff(t1.get_name());
 	for (int i = 0; i < t1.get_records().size(); ++i)
 	{
