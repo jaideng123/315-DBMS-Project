@@ -14,8 +14,8 @@ public:
 	//constructors go here!
 
 	//needs set and get functions
-	string get_name(){return name;}
-	string get_type(){return type;}
+	string get_name() const {return name;}
+	string get_type() const {return type;}
 	Attribute& operator=(const Attribute& rhs){
 		name = rhs.name;
 		type = rhs.type;
@@ -26,4 +26,11 @@ private:
 	string type;
 	string name;
 };
+
+bool operator==(const Attribute& lhs, const Attribute& rhs){
+		if(lhs.get_name() == rhs.get_name())
+			if(lhs.get_type() == rhs.get_type())
+				return true;
+		return false;
+}
 #endif

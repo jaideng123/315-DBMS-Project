@@ -176,18 +176,22 @@ void Database::close(string table_name) {
 
 
 //Query functions
-//NOT DONE
-// Table Database::set_union(Table t1, Table t2){
-// 	Table union("set_union");
-// 	//adding attributes
-// 	int t1_attSize = t1.att_size();
-// 	int t2_attSize = t2.att_size();
-// 	for(int i = 0; i < t1_attSize; i++){
-// 		for(int j = 0; j < t2_attSize; j++){
-// 			if(t1.get)	
-// 		}
-// 	}
-// }
+Table Database::set_union(Table t1, Table t2){
+	if(union_compatible(t1, t2))
+	{
+		Table sunion(t1.get_name());
+		//adding attributes
+		for (int i = 0; i < t1.get_records().size(); ++i)
+		{
+			if(record_exists(t2,t1.get_records()[i]))
+				sunion.add_record(t1.get_records()[i]);
+		}
+		return sunion;
+	}
+	else
+		cout<<"Sets are incompatible"<<endl;
+	return NULL;
+}
 
 //
 Table Database::set_difference(Table t1, Table t2){
@@ -201,6 +205,32 @@ Table Database::set_difference(Table t1, Table t2){
 	}
 	return diff;
 }
+
+Table Database::set_product(Table t1, Table t2){
+	Table prod(t1.get_name());
+
+
+	prod.set_attributes(t1.get_attributes());
+
+	for(int i = 0; i< t2.get_attributes().size(); i++){
+		for(int j = 0; j < t1.get_attributes().size(); j++){
+			if(t2.get_attribute(i)==t1.get_attribute(j)
+				break;
+			if(j == t1.get_attributes().size()-1)
+				prod.add_attribute(t2.get_attribute(i))
+		}
+	}
+	prod.set_records(t1.get_records());
+	for(int i = 0; i< t2.get_records().size(); i++){
+		for(int j = 0; j < t1.get_records().size(); j++){
+			if(t2.get_record(i)==t1.get_record(j)
+				break;
+			if(j == t1.get_record().size()-1)
+				prod.add_record(t2.get_record(i))
+		}
+	}
+}
+
 
 //******************
 //private functions*
