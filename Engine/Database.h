@@ -17,7 +17,7 @@ public:
 	vector<Table> tables;
 	//Command functions
 	void open(string table_name);
-	void close(string table_name){}
+	void close(string table_name);
 	void write(string table_name);
 	void create(string table_name, vector<Attribute> v);
 	void insert(string table_name, Record record);

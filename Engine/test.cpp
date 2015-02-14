@@ -43,8 +43,6 @@ int main(){
 	db.tables.push_back(test); 
 	db.insert(test.get_name(), r2);
 	test.add_record(r2);
-	//test.print();
-
 	vector<int> temp;
 
 	temp.push_back(15);
@@ -56,8 +54,12 @@ int main(){
 
 	// db.create("Test Table 2", attr);
 	// db.insert("Test Table 2", r2);
-	// db.show("Test Table2");
+	// Test commands involving disk
+	db.show("Test Table");
 	db.write("Test Table");
+	db.close("Test Table");
+	db.open("Test Table");
+	db.show("Test Table");
 	//db.write("Test Table 2");
 
 	return 0;

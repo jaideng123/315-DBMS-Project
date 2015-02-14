@@ -9,7 +9,7 @@ void Database::write(string table_name){
 	}
 
 	Table table = *find_table(table_name);
-	string file_name = table_name + ".db";
+	string file_name ="Databases/" + table_name + ".db";
 	ofstream my_file;
   	my_file.open(file_name.c_str());
   	//print attributes
@@ -139,7 +139,7 @@ void Database::open(string table_name) {
 	myFile.open(filename);
 	
 	if(!myFile) {
-		cout<<"Could find file!\n";
+		cout<<"Error: unable to open file!\n";
 	}
 	else {
 		//Get first line containing attributes
@@ -153,7 +153,21 @@ void Database::open(string table_name) {
 	}
 }
 
+//remove table from memory
+void Database::close(string table_name) {
+	if(!table_exists(table_name)){
+		cout<<"Error Table does not exist";
+		return;
+	}
+	for (int i = 0; i < tables.size(); ++i)
+	{
+		if(tables[i].get_name() == table_name){
+			tables.erase(tables.begin() + i);
+			return;
+		}
+	}
 
+}
 
 
 //Query functions
