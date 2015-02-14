@@ -45,6 +45,7 @@ public:
 	//prints table to screen
 	void print();
 
+	//overloading the assignment operator for table class
 	Table& operator=(const Table&);
 
 private:
@@ -55,7 +56,7 @@ private:
 
 };
 
-
+//overloading equals-equals operator for table class
 inline bool operator==(const Table& lhs, const Table& rhs){
 	if(lhs.get_records() == rhs.get_records())
 		if(lhs.get_attributes() == rhs.get_attributes())
