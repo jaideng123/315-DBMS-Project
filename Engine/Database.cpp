@@ -216,6 +216,27 @@ Table Database::set_project(Table t1, vector<string> attrs){
 
 }
 
+//not done yet
+Table Database::set_rename(Table t1, vector<string> attribute_names){
+
+	Table new_table(t1.get_name());
+	vector<Attribute> new_attrs;
+
+	for(int i = 0; i < attributes_names.size(); i++){
+		new_attrs.push_back(attributes_names[i]);
+	}
+
+	vector<Record> new_rec;
+	for (int i = 0; i < t1.get_records().size(); ++i){
+		Record temp;
+		for (int j = 0; j < rows.size(); ++j){
+			temp.add_entry(t1.get_record(i).get_entry(rows[j]));
+		}
+		new_rec.push_back(temp);
+	}
+	return new_table;
+}
+
 
 //*************************
 //private helper functions*
@@ -316,3 +337,4 @@ Table * Database::find_table(string table_name){
 	}
 	return NULL;
 }
+

@@ -38,6 +38,7 @@ public:
 	Record get_record(int i){return records[i];}
 	void set_records(vector<Record> new_records);
 	void add_record(Record new_record){records.push_back(new_record);}
+	void set_record(int i, Record r) { records[i] = r;}
 	int rec_size(){return records.size();}
 	void remove_record(int i);
 
@@ -62,3 +63,4 @@ inline bool operator==(const Table& lhs, const Table& rhs){
 	return false;
 }
 #endif
+

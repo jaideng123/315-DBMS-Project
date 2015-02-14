@@ -34,14 +34,14 @@ public:
 	//prints table
 	void show(string table_name);
 	//swaps out records at the indices in old records for new ones
-	void update(string table_name,vector<Record> new_records,vector<int> old_records){}
+	void update(string table_name,vector<Record> new_records,vector<int> old_records);
 	//delete records based on index
 	void delete_records(string table_name,vector<int> to_remove);
 
 	//Query functions
 
 	//select based on record ID's(position in table)
-	Table set_select(Table t1,vector<int> record_IDs){}
+	Table set_select(Table t1,vector<int> record_IDs);
 	//everything in t1  + everything in t2 not in t1
 	Table set_union(Table t1, Table t2);
 	//everything in t1 that is not in t2
@@ -51,7 +51,7 @@ public:
 	//select only certain attributes
 	Table set_project(Table t1, vector<string> attribute_names);
 	//rename all attributes
-	Table set_rename(Table t1, vector<string> attribute_names){}
+	Table set_rename(Table t1, vector<string> attribute_names);
 
 
 private:
