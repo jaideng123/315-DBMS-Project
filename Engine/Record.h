@@ -45,7 +45,7 @@ private:
 	vector<string> values;
 };
 
-//overloading assignment operator for record class
+//overloading equals-equals operator for record class
 inline bool operator==(const Record& lhs, const Record& rhs){
 		if(lhs.get_size() == rhs.get_size()){
 			for(int i = lhs.get_values().size(); i > 0; i--)
