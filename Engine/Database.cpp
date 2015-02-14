@@ -1,7 +1,49 @@
 #include "Database.h" 
 
+//******************
+//Command functions*
+//******************
 
-//Command functions
+//Takes a .db file from DB folder and puts it into Main memory
+void Database::open(string table_name) {
+	ifstream myFile;
+	//Warning - Directory Path Hardcoded
+	string filename = "Databases/" +table_name+".db"; 
+	myFile.open(filename);
+	
+	if(!myFile) {
+		cout<<"Error: unable to open file!\n";
+	}
+	else {
+		//Get first line containing attributes
+		vector<Attribute> attributes1;
+		vector<Record> records;
+		get_attributes_from_file(myFile, attributes1);
+		//Get records
+		get_records_from_file(myFile,records,attributes1.size());
+
+		Table from_file(table_name,attributes1,records);
+		
+		this->tables.push_back(from_file);
+	}
+}
+
+//remove table from memory
+void Database::close(string table_name) {
+	if(!table_exists(table_name)){
+		cout<<"Error Table does not exist";
+		return;
+	}
+	for (int i = 0; i < tables.size(); ++i)
+	{
+		if(tables[i].get_name() == table_name){
+			tables.erase(tables.begin() + i);
+			return;
+		}
+	}
+
+}
+
 void Database::write(string table_name){
 	if(!table_exists(table_name)){
 		cout<<"Error: Table not found\n";
@@ -55,25 +97,6 @@ void Database::show(string table_name){
 		cout<<"Error: Table not found!"<<endl;
 }
 
-//no need to copy in to a table, just deletes the record
-//remove shifts all elements down which will throw off the next remove call
-/*
-void Database::delete_records(string table_name,vector<int> to_remove){
-	
-	if(table_exists(table_name)){
-		for(int i = 0; i < to_remove.size(); i++){
-			if(to_remove[i] < find_table(table_name)->rec_size()){
-				find_table(table_name)->remove_record(to_remove[i]);
-				for(int j = 0; j < to_remove.size(); j++)
-				{
-					if(to_remove[j] > to_remove[i])
-						to_remove[j]--;
-				}
-			}
-		}
-	}
-}
-*/
 
 // copies data out of a table then over writes it
 void Database::delete_records(string table_name, vector<int> to_remove){
@@ -95,92 +118,11 @@ void Database::delete_records(string table_name, vector<int> to_remove){
  }
 
 
-void Database::get_attributes_from_file(ifstream &input,vector<Attribute> &attributes) {
-	
-	string attribute_line;
-	getline(input, attribute_line);
 
-	stringstream stream(attribute_line);
-	string attribute_pair ="";
-	//Parse first using ',' delimiter. 
-	while(getline ( stream, attribute_pair, ',')) {
-		stringstream attribute_string(attribute_pair);
-		string attribute_name;
-		string type;
-		getline(attribute_string, attribute_name, '(');
-		getline(attribute_string, type);
-		type = type.substr(0,type.size()-1);
-		Attribute attribute(attribute_name,type);
-		attributes.push_back(attribute);
-	}
-}
+//****************
+//Query functions*
+//****************
 
-void Database::get_records_from_file(ifstream &input ,
-		vector<Record> &records, int num_attributes) 
-	{
-	
-	string record_line;
-	
-	
-	
-	//Parse first using ',' delimiter. 
-	while(getline(input, record_line)){
-		stringstream stream(record_line);
-		vector<string> tuple_fromFile;
-		for(int i = 0; i < num_attributes; i++) {
-			string value ="";
-			getline ( stream, value, ',');
-			tuple_fromFile.push_back(value);
-		}
-		Record record(tuple_fromFile);
-		records.push_back(record);
-	 
- 	}
-	
-}
-
-//Takes a .db file from DB folder and puts it into Main memory
-void Database::open(string table_name) {
-	ifstream myFile;
-	//Warning - Directory Path Hardcoded
-	string filename = "Databases/" +table_name+".db"; 
-	myFile.open(filename);
-	
-	if(!myFile) {
-		cout<<"Error: unable to open file!\n";
-	}
-	else {
-		//Get first line containing attributes
-		vector<Attribute> attributes1;
-		vector<Record> records;
-		get_attributes_from_file(myFile, attributes1);
-		//Get records
-		get_records_from_file(myFile,records,attributes1.size());
-
-		Table from_file(table_name,attributes1,records);
-		
-		this->tables.push_back(from_file);
-	}
-}
-
-//remove table from memory
-void Database::close(string table_name) {
-	if(!table_exists(table_name)){
-		cout<<"Error Table does not exist";
-		return;
-	}
-	for (int i = 0; i < tables.size(); ++i)
-	{
-		if(tables[i].get_name() == table_name){
-			tables.erase(tables.begin() + i);
-			return;
-		}
-	}
-
-}
-
-
-//Query functions
 Table Database::set_union(Table t1, Table t2){
 	if(union_compatible(t1, t2))
 	{
@@ -261,9 +203,70 @@ Table Database::set_project(Table t1, vector<string> attrs){
 }
 
 
-//******************
-//private functions*
-//******************
+//*************************
+//private helper functions*
+//*************************
+
+void Database::get_attributes_from_file(ifstream &input,vector<Attribute> &attributes){
+	
+	string attribute_line;
+	getline(input, attribute_line);
+
+	stringstream stream(attribute_line);
+	string attribute_pair ="";
+	//Parse first using ',' delimiter. 
+	while(getline ( stream, attribute_pair, ',')) {
+		stringstream attribute_string(attribute_pair);
+		string attribute_name;
+		string type;
+		getline(attribute_string, attribute_name, '(');
+		getline(attribute_string, type);
+		type = type.substr(0,type.size()-1);
+		Attribute attribute(attribute_name,type);
+		attributes.push_back(attribute);
+	}
+}
+
+void Database::get_records_from_file(ifstream &input ,
+		vector<Record> &records, int num_attributes){
+	
+	string record_line;
+	
+	
+	
+	//Parse first using ',' delimiter. 
+	while(getline(input, record_line)){
+		stringstream stream(record_line);
+		vector<string> tuple_fromFile;
+		for(int i = 0; i < num_attributes; i++) {
+			string value ="";
+			getline ( stream, value, ',');
+			tuple_fromFile.push_back(value);
+		}
+		Record record(tuple_fromFile);
+		records.push_back(record);
+	 
+ 	}
+	
+}
+
+//union compatible = same set of attributes
+//used for union and difference
+bool Database::union_compatible(Table t1, Table t2){
+	vector<Attribute> attr1 = t1.get_attributes();
+	vector<Attribute> attr2 = t2.get_attributes();
+	if(attr1.size() != attr2.size())
+		return false;
+	for (int i = 0; i < attr1.size(); ++i)
+	{
+		if(attr1[i].get_name() != attr2[i].get_name())
+			return false;
+		if(attr1[i].get_type() != attr2[i].get_type())
+			return false;
+	}
+	return true;
+}
+
 bool Database::table_exists(string table_name){
 	for (int i = 0; i < tables.size(); ++i)
 	{
@@ -298,21 +301,4 @@ Table * Database::find_table(string table_name){
 			return &tables[i];
 	}
 	return NULL;
-}
-
-//union compatible = same set of attributes
-//used for union and difference
-bool Database::union_compatible(Table t1, Table t2){
-	vector<Attribute> attr1 = t1.get_attributes();
-	vector<Attribute> attr2 = t2.get_attributes();
-	if(attr1.size() != attr2.size())
-		return false;
-	for (int i = 0; i < attr1.size(); ++i)
-	{
-		if(attr1[i].get_name() != attr2[i].get_name())
-			return false;
-		if(attr1[i].get_type() != attr2[i].get_type())
-			return false;
-	}
-	return true;
 }
