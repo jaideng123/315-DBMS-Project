@@ -339,4 +339,3 @@ Table * Database::find_table(string table_name){
 	}
 	return NULL;
 }
-
