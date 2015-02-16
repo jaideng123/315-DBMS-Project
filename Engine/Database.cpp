@@ -143,6 +143,18 @@ void Database::delete_records(string table_name, vector<int> to_remove){
 //Query functions*
 //****************
 
+Table Database::set_select(Table t1,vector<int> record_IDs){
+	Table selection (t1.get_name(),t1.get_attributes());
+	for(int i =0; i< record_IDs.size(); i++){
+		Record buffer = t1.get_record(record_IDs[i]);
+		
+		selection.add_record(buffer);
+	}
+	
+	return selection;
+}
+
+
 //everything in t1  + everything in t2 not in t1
 Table Database::set_union(Table t1, Table t2){
 	if(union_compatible(t1, t2))
