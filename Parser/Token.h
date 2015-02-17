@@ -1,3 +1,6 @@
+#ifndef _token_h_                   // include file only once
+#define _token_h_
+
 #include <string>
 
 using namespace std;
@@ -21,3 +24,5 @@ private:
 	Token_Type type;
 	string value;
 };
+
+#endif
