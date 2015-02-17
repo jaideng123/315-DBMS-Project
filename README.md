@@ -37,3 +37,48 @@
 
 ##Directory for .db files
   The directory for the .db files will be named Databases
+
+##Token_Type  -  Symbol
+```
+TABLE - "TABLE"
+OPEN  - "OPEN"
+CLOSE - "CLOSE
+WRITE - "WRITE"
+CREATE- "CREATE"
+INSERT- "INSERT"
+SHOW  - "SHOW"
+UPDATE- "UPDATE"
+DELETE- "DELETE"
+SELECT- "SELECT"
+UNION - "+"
+DIFF  - "-"
+PRODUCT-"*"
+PROJECT-"project"
+RENAME- "rename"
+LEFTPAREN-"("
+RIGHTPAREN-")"
+PRIMARY - "PRIMARY"
+KEY   - "KEY"
+INTO  - "INTO"
+VALUES- "VALUES"
+FROM  - "FROM"
+LEFTARROW-"<-"
+EQUALSIGN-"="
+EQ    - "=="
+LT    - "<"
+LEQ   - "<="
+GT    - ">"
+GEQ   - ">="
+NEQ   - "!="
+AND   - "&&"
+OR    - "||"
+WHERE - "WHERE"
+COMMA - ","
+SEMICOLON - ";"
+NUMBER -  "NUMBER"
+VARCHAR-  "VARCHAR"
+INTEGER-  "INTEGER"
+RELATION- "RELATION"
+EXIT  - "EXIT"
+IDENTIFIER  - everything that isnt a key word
+```
