@@ -24,7 +24,10 @@ void Parser::query(){
 	if(!is_next(Token::LEFTARROW))
 		throw runtime_error("Parsing Error");
 	current_token++;
-	
+	expr();
+}
+
+void Parser::expr(){
 	if(is_next(Token::SELECT))
 		select_expr();
 		
@@ -42,13 +45,31 @@ void Parser::query(){
 			diff_expr();
 		else if(is_next(Token::PRODUCT))
 			prod_expr();
+		else if(is_next(Token::SEMICOLON))
+			return;
 		else
 			throw runtime_error("Parsing Error");
 	}
 	
-	else if(is_next(Token::LEFTPAREN))
+	else if(is_next(Token::LEFTPAREN)){
 		atomic_expr();
+		if(!is_next(Token::RIGHTPAREN))
+			throw runtime_error("Parsing Error");
+	}
 	
+	else
+		throw runtime_error("Parsing Error");
+}
+
+void Parser::atomic_expr(){
+	current_token++;
+	if(is_next(Token::IDENTIFIER))
+		current_token++;
+	else if(is_next(Token::LEFTPAREN)){
+		expr();
+		if(!is_next(Token::RIGHTPAREN))
+			throw runtime_error("Parsing Error");
+	}
 	else
 		throw runtime_error("Parsing Error");
 }

@@ -18,13 +18,14 @@ private:
 
 	void command();
 	void query();
+	void expr();
 	void select_expr(){}
 	void rename_expr(){}
 	void project_expr(){}
 	void union_expr(){}
 	void diff_expr(){}
 	void prod_expr(){}
-	void atomic_expr(){}
+	void atomic_expr();
 
 	void condition();
 
