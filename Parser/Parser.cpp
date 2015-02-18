@@ -15,6 +15,9 @@ void Parser::test_parse(vector<Token> input_tokens){
 
 }
 
+//i will call this when i need it, it will start pointing
+//to the token after the left parentheses and should end
+//pointing at just before the right parentheses
 void Parser::condition(){
 	
 }
@@ -25,6 +28,8 @@ void Parser::query(){
 		throw runtime_error("Parsing Error");
 	current_token++;
 	expr();
+	if(!is_next(Token::SEMICOLON))
+		throw runtime_error("Parsing Error");
 }
 
 void Parser::expr(){
@@ -72,6 +77,30 @@ void Parser::atomic_expr(){
 	}
 	else
 		throw runtime_error("Parsing Error");
+}
+
+void Parser::select_expr(){
+	current_token++;
+	if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	condition();
+	current_token++;
+	if(!is_next(Token::RIGHTPAREN))
+		throw runtime_error("Parsing Error");
+
+	current_token++;
+	if(is_next(Token::IDENTIFIER))
+		current_token++;
+	else if(is_next(Token::LEFTPAREN)){
+		current_token++;
+		atomic_expr();
+		if(!is_next(Token::RIGHTPAREN))
+			throw runtime_error("Parsing Error");
+	}
+	else
+		throw runtime_error("Parsing Error");
+	return;
+
 }
 
 void Parser::command(){
