@@ -22,6 +22,7 @@ void Parser::condition(){
 	
 }
 
+//parse query
 void Parser::query(){
 
 	if(!is_next(Token::LEFTARROW))
@@ -32,6 +33,7 @@ void Parser::query(){
 		throw runtime_error("Parsing Error");
 }
 
+//determine type of expression
 void Parser::expr(){
 	if(is_next(Token::SELECT))
 		select_expr();
@@ -67,6 +69,8 @@ void Parser::expr(){
 		throw runtime_error("Parsing Error");
 }
 
+//for nested instructions
+//takes atomic expression without ()
 void Parser::atomic_expr(){
 	if(is_next(Token::IDENTIFIER))
 		current_token++;
@@ -81,8 +85,11 @@ void Parser::atomic_expr(){
 	}
 }
 
+//for select expressions
 void Parser::select_expr(){
+	//select
 	current_token++;
+	//()
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	condition();
@@ -91,6 +98,7 @@ void Parser::select_expr(){
 		throw runtime_error("Parsing Error");
 
 	current_token++;
+	//table
 	if(is_next(Token::IDENTIFIER))
 		current_token++;
 	else if(is_next(Token::LEFTPAREN)){
@@ -110,6 +118,8 @@ void Parser::command(){
 
 }
 
+//determine what the next token will be
+//will not go out of range
 bool Parser::is_next(Token::Token_Type t){
 	if(current_token + 1 >= tokens.size())
 		return false;
