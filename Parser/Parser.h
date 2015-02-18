@@ -14,9 +14,14 @@ public:
 private:
 	vector<Token> tokens;
 	int current_token;
+	bool is_next(Token::Token_Type);
 
 	void command();
 	void query();
+	void select_expr(){}
+	void rename_expr(){}
+	void project_expr(){}
+	void atomic_expr(){}
 	void condition();
 
 };
