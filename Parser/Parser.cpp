@@ -89,7 +89,7 @@ void Parser::atomic_expr(){
 void Parser::select_expr(){
 	//select
 	current_token++;
-	//()
+	//(condition)
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	condition();
@@ -98,6 +98,38 @@ void Parser::select_expr(){
 		throw runtime_error("Parsing Error");
 
 	current_token++;
+	//expr
+	if(is_next(Token::IDENTIFIER))
+		current_token++;
+	else if(is_next(Token::LEFTPAREN)){
+		current_token++;
+		atomic_expr();
+		if(!is_next(Token::RIGHTPAREN))
+			throw runtime_error("Parsing Error");
+		current_token++;
+	}
+	else
+		throw runtime_error("Parsing Error");
+	return;
+}
+void Parser::rename_expr(){
+	//rename
+	current_token++;
+	//(attr_list)
+	if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	while(!is_next(Token::RIGHTPAREN)){
+		if(!is_next(Token::IDENTIFIER))
+			throw runtime_error("Parsing Error");
+		current_token++;
+		if(!is_next(Token::COMMA))
+			break;
+		current_token++;
+	}
+	if(!is_next(Token::RIGHTPAREN))
+		throw runtime_error("Parsing Error");
+	//expr
 	//table
 	if(is_next(Token::IDENTIFIER))
 		current_token++;
