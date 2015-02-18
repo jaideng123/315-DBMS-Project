@@ -57,6 +57,7 @@ void Parser::expr(){
 	}
 	
 	else if(is_next(Token::LEFTPAREN)){
+		current_token++;
 		atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
@@ -67,16 +68,17 @@ void Parser::expr(){
 }
 
 void Parser::atomic_expr(){
-	current_token++;
 	if(is_next(Token::IDENTIFIER))
 		current_token++;
 	else if(is_next(Token::LEFTPAREN)){
-		expr();
+		current_token++;
+		atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 	}
-	else
-		throw runtime_error("Parsing Error");
+	else{
+		expr();
+	}
 }
 
 void Parser::select_expr(){
@@ -96,6 +98,7 @@ void Parser::select_expr(){
 		atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
+		current_token++;
 	}
 	else
 		throw runtime_error("Parsing Error");
