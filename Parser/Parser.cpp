@@ -20,17 +20,35 @@ void Parser::condition(){
 }
 
 void Parser::query(){
+
 	if(!is_next(Token::LEFTARROW))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	
 	if(is_next(Token::SELECT))
 		select_expr();
+		
 	else if(is_next(Token::RENAME))
 		rename_expr();
+		
 	else if(is_next(Token::PROJECT))
 		project_expr();
-	else if(is_next(Token::IDENTIFIER))
+		
+	else if(is_next(Token::IDENTIFIER)){
+		current_token++;
+		if(is_next(Token::UNION))
+			union_expr();
+		else if(is_next(Token::DIFF))
+			diff_expr();
+		else if(is_next(Token::PRODUCT))
+			prod_expr();
+		else
+			throw runtime_error("Parsing Error");
+	}
+	
+	else if(is_next(Token::LEFTPAREN))
 		atomic_expr();
+	
 	else
 		throw runtime_error("Parsing Error");
 }
