@@ -21,20 +21,8 @@ void Parser::test_parse(vector<Token> input_tokens){
 //***edit 2/18/2015: instead of pointing after leftparen, 
 //***it points before leftparen when we get to condition()
 void Parser::condition(){
-	if(!is_next(Token::LEFTPAREN))
-		throw runtime_error("Parsing Error");
-	current_token++;
-	if(is_next(Token::RIGHTPAREN))
-		return;
-	else if(is_next(Token::IDENTIFIER)){
-			current_token++;
-			if(is_next(Token::LEFTARROW))
-				query();
-			else
-				return;
-	}
-	else
-		expr();
+	while(!is_next(Token::RIGHTPAREN))
+		current_token++;
 }
 
 //parse query
@@ -255,7 +243,64 @@ void Parser::prod_expr(){
 	return;
 }
 
+//not done
 void Parser::command(){
+
+	if(is_next(Token::IDENTIFIER))
+		return;
+	if(is_next(Token::OPEN)){
+		current_token++;
+		if(is_next(Token::IDENTIFIER)){
+			current_token++;
+		}
+	}
+	else if(is_next(Token::CLOSE)){
+		current_token++;
+		if(is_next(Token::IDENTIFIER)){
+			current_token++;
+		}
+	}
+	else if(is_next(Token::WRITE)){
+		current_token++;
+		if(is_next(Token::IDENTIFIER)){
+			current_token++;
+		}
+	}
+	else if(is_next(Token::EXIT)){
+		current_token++;
+		return;
+	}
+	else if(is_next(Token::SHOW)){
+		current_token++;
+		if(is_next(Token::IDENTIFIER)){
+			current_token++;
+		}
+	}
+	else if(is_next(Token::CREATE)){
+		current_token++;
+		if(is_next(Token::IDENTIFIER)){
+			current_token++;
+		}
+	}
+	else if(is_next(Token::UPDATE)){
+		current_token++;
+		if(is_next(Token::IDENTIFIER)){
+			current_token++;
+		}
+	}
+	else if(is_next(Token::INSERT)){
+		current_token++;
+		if(is_next(Token::IDENTIFIER)){
+			current_token++;
+		}
+	}
+	else if(is_next(Token::DELETE)){
+		current_token++;
+		if(is_next(Token::IDENTIFIER)){
+			current_token++;
+		}
+	}
+	
 
 }
 
