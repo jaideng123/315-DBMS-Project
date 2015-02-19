@@ -35,6 +35,7 @@ void Parser::condition(){
 	}
 	else
 		expr();
+}
 
 //parse query
 void Parser::query(){
