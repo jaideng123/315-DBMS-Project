@@ -28,6 +28,15 @@ private:
 	void prod_expr();
 
 	void condition();
+	void open_cmd();
+	void close_cmd();
+	void write_cmd();
+	void exit_cmd();
+	void show_cmd();
+	void create_cmd();
+	void update_cmd();
+	void insert_cmd();
+	void delete_cmd();
 
 };
 
