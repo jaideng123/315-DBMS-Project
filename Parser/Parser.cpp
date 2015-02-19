@@ -53,8 +53,6 @@ void Parser::comparison(){
 		current_token++;
 	else if(is_next(Token::GT))
 		current_token++;
-	while(!is_next(Token::RIGHTPAREN))
-		current_token++;
 	else if(is_next(Token::GEQ))
 		current_token++;
 	else if(is_next(Token::NEQ))
@@ -386,7 +384,7 @@ void Parser::command(){
 			current_token++;
 		}
 	}
-	delete
+	//delete
 	else if(is_next(Token::DELETE)){
 		current_token++;
 		if(is_next(Token::IDENTIFIER)){
