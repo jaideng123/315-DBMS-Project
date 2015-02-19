@@ -44,7 +44,9 @@ void Parser::condition(){
 }
 
 void Parser::comparison(){
+	//operand 1
 	current_token++;
+	//symbol
 	if(is_next(Token::EQ))
 		current_token++;
 	else if(is_next(Token::LT))
@@ -61,7 +63,7 @@ void Parser::comparison(){
 		current_token++;
 	else
 		throw runtime_error("Parsing Error");
-	
+	//operand 2
 	if(is_next(Token::NUMBER) || is_next(Token::INTEGER))
 		current_token++;
 	else if(is_next(Token::VARCHAR) &&(
@@ -70,6 +72,13 @@ void Parser::comparison(){
 		current_token++;
 	else
 		throw runtime_error("Parsing Error");
+	//check for conjunction
+	if(is_next(Token::AND))
+		current_token++;
+	else if(is_next(Token::OR))
+		current_token++;
+	
+	
 }
 
 //parse query

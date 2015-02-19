@@ -4,7 +4,7 @@
 using namespace std;
 void select_test(){
 	vector<Token> test;
-	//test <- select () (select () (select (age < 5) test2));
+	//test <- select () (select () (select (age < 5 && name == "Eric") test2));
 	test.push_back(Token(Token::IDENTIFIER,"test"));
 	test.push_back(Token(Token::LEFTARROW,"<-"));
 	test.push_back(Token(Token::SELECT,"select"));
@@ -20,6 +20,10 @@ void select_test(){
 	test.push_back(Token(Token::IDENTIFIER,"age"));
 	test.push_back(Token(Token::LT,"<"));
 	test.push_back(Token(Token::INTEGER,"5"));
+	test.push_back(Token(Token::AND,"&&"));
+	test.push_back(Token(Token::IDENTIFIER,"name"));
+	test.push_back(Token(Token::EQ,"=="));
+	test.push_back(Token(Token::VARCHAR,"Eric"));
 	test.push_back(Token(Token::RIGHTPAREN,")"));
 	test.push_back(Token(Token::IDENTIFIER,"test2"));//
 	test.push_back(Token(Token::RIGHTPAREN,")"));
