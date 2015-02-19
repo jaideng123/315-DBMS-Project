@@ -28,6 +28,7 @@ private:
 	void prod_expr();
 
 	void condition();
+	void comparison();
 
 };
 

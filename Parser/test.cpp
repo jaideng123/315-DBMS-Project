@@ -4,7 +4,7 @@
 using namespace std;
 void select_test(){
 	vector<Token> test;
-	//test <- select () (select () (select () test2));
+	//test <- select () (select () (select (age < 5) test2));
 	test.push_back(Token(Token::IDENTIFIER,"test"));
 	test.push_back(Token(Token::LEFTARROW,"<-"));
 	test.push_back(Token(Token::SELECT,"select"));
@@ -17,6 +17,9 @@ void select_test(){
 	test.push_back(Token(Token::LEFTPAREN,"("));
 	test.push_back(Token(Token::SELECT,"select"));
 	test.push_back(Token(Token::LEFTPAREN,"("));
+	test.push_back(Token(Token::IDENTIFIER,"age"));
+	test.push_back(Token(Token::LT,"<"));
+	test.push_back(Token(Token::INTEGER,"5"));
 	test.push_back(Token(Token::RIGHTPAREN,")"));
 	test.push_back(Token(Token::IDENTIFIER,"test2"));//
 	test.push_back(Token(Token::RIGHTPAREN,")"));
@@ -92,7 +95,7 @@ void diff_test(){
 
 void prod_test(){
 	vector<Token> test;
-	//test <- test2 - test3;
+	//test <- test2 * test3;
 	test.push_back(Token(Token::IDENTIFIER,"test"));
 	test.push_back(Token(Token::LEFTARROW,"<-"));
 	test.push_back(Token(Token::IDENTIFIER,"test2"));
