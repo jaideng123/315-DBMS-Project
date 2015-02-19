@@ -18,9 +18,23 @@ void Parser::test_parse(vector<Token> input_tokens){
 //i will call this when i need it, it will start pointing
 //to the token after the left parentheses and should end
 //pointing at just before the right parentheses
+//***edit 2/18/2015: instead of pointing after leftparen, 
+//***it points before leftparen when we get to condition()
 void Parser::condition(){
-	
-}
+	if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	if(is_next(Token::RIGHTPAREN))
+		return;
+	else if(is_next(Token::IDENTIFIER)){
+			current_token++;
+			if(is_next(Token::LEFTARROW))
+				query();
+			else
+				return;
+	}
+	else
+		expr();
 
 //parse query
 void Parser::query(){
@@ -93,7 +107,6 @@ void Parser::select_expr(){
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	condition();
-	current_token++;
 	if(!is_next(Token::RIGHTPAREN))
 		throw runtime_error("Parsing Error");
 
@@ -181,6 +194,7 @@ void Parser::project_expr(){
 	return;
 }
 
+//for union expressions
 void Parser::union_expr(){
 	//identifier is current token here
 	//+ 
@@ -200,6 +214,7 @@ void Parser::union_expr(){
 	return;
 }
 
+//for difference expressions
 void Parser::diff_expr(){
 	//identifier is current token here
 	//- 
@@ -219,6 +234,7 @@ void Parser::diff_expr(){
 	return;
 }
 
+//for product expressions
 void Parser::prod_expr(){
 	//identifier is current token here
 	//- 
