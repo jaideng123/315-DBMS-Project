@@ -112,6 +112,8 @@ void Parser::select_expr(){
 		throw runtime_error("Parsing Error");
 	return;
 }
+
+//for rename expressions
 void Parser::rename_expr(){
 	//rename
 	current_token++;
@@ -129,8 +131,8 @@ void Parser::rename_expr(){
 	}
 	if(!is_next(Token::RIGHTPAREN))
 		throw runtime_error("Parsing Error");
+	current_token++;
 	//expr
-	//table
 	if(is_next(Token::IDENTIFIER))
 		current_token++;
 	else if(is_next(Token::LEFTPAREN)){
@@ -143,7 +145,97 @@ void Parser::rename_expr(){
 	else
 		throw runtime_error("Parsing Error");
 	return;
+}
 
+//for project expressions
+void Parser::project_expr(){
+	//project
+	current_token++;
+	//(attr_list)
+	if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	while(!is_next(Token::RIGHTPAREN)){
+		if(!is_next(Token::IDENTIFIER))
+			throw runtime_error("Parsing Error");
+		current_token++;
+		if(!is_next(Token::COMMA))
+			break;
+		current_token++;
+	}
+	if(!is_next(Token::RIGHTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	//expr
+	if(is_next(Token::IDENTIFIER))
+		current_token++;
+	else if(is_next(Token::LEFTPAREN)){
+		current_token++;
+		atomic_expr();
+		if(!is_next(Token::RIGHTPAREN))
+			throw runtime_error("Parsing Error");
+		current_token++;
+	}
+	else
+		throw runtime_error("Parsing Error");
+	return;
+}
+
+void Parser::union_expr(){
+	//identifier is current token here
+	//+ 
+	current_token++;
+	//expr
+	if(is_next(Token::IDENTIFIER))
+		current_token++;
+	else if(is_next(Token::LEFTPAREN)){
+		current_token++;
+		atomic_expr();
+		if(!is_next(Token::RIGHTPAREN))
+			throw runtime_error("Parsing Error");
+		current_token++;
+	}
+	else
+		throw runtime_error("Parsing Error");
+	return;
+}
+
+void Parser::diff_expr(){
+	//identifier is current token here
+	//- 
+	current_token++;
+	//expr
+	if(is_next(Token::IDENTIFIER))
+		current_token++;
+	else if(is_next(Token::LEFTPAREN)){
+		current_token++;
+		atomic_expr();
+		if(!is_next(Token::RIGHTPAREN))
+			throw runtime_error("Parsing Error");
+		current_token++;
+	}
+	else
+		throw runtime_error("Parsing Error");
+	return;
+}
+
+void Parser::prod_expr(){
+	//identifier is current token here
+	//- 
+	current_token++;
+	//expr
+	if(is_next(Token::IDENTIFIER))
+		current_token++;
+	else if(is_next(Token::LEFTPAREN)){
+		current_token++;
+		atomic_expr();
+		if(!is_next(Token::RIGHTPAREN))
+			throw runtime_error("Parsing Error");
+		current_token++;
+	}
+	else
+		throw runtime_error("Parsing Error");
+	return;
 }
 
 void Parser::command(){
