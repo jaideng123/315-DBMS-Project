@@ -181,6 +181,7 @@ void Parser::project_expr(){
 	return;
 }
 
+//for union expressions
 void Parser::union_expr(){
 	//identifier is current token here
 	//+ 
@@ -200,6 +201,7 @@ void Parser::union_expr(){
 	return;
 }
 
+//for difference expressions
 void Parser::diff_expr(){
 	//identifier is current token here
 	//- 
@@ -219,6 +221,7 @@ void Parser::diff_expr(){
 	return;
 }
 
+//for product expressions
 void Parser::prod_expr(){
 	//identifier is current token here
 	//- 
