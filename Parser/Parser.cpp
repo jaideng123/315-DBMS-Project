@@ -382,69 +382,67 @@ void Parser::show_cmd(){
 
 void Parser::create_cmd(){
 	current_token++;
-	if(is_next(Token::IDENTIFIER)){
-		current_token++;
-		if(is_next(Token::TABLE)){
-			current_token++;
-			if(is_next(Token::IDENTIFIER)){
-				current_token++;
-				//------------------------------(
-				if(!is_next(Token::LEFTPAREN))
-					throw runtime_error("Parsing Error");
-				current_token++;
-				while(!is_next(Token::RIGHTPAREN)){
-					if(!is_next(Token::IDENTIFIER))
-						throw runtime_error("Parsing Error");
-					current_token++;
-					if(is_next(Token::VARCHAR)){
-						current_token++;
-						if(!is_next(Token::LEFTPAREN))
-							throw runtime_error("Parsing Error");
-						current_token++;
-						if(!is_next(Token::INTEGER))
-							throw runtime_error("Parsing Error");
-						current_token++;
-						if(!is_next(Token::RIGHTPAREN))
-							throw runtime_error("Parsing Error");
-						current_token++;
-					}
-					else if(is_next(Token::INTEGER)){
-						current_token++;
-					}
-					else
-						throw runtime_error("Parsing Error");
-	
-					if(!is_next(Token::COMMA))
-						break;
-					current_token++;
-				}
-				current_token++;
-				//-------------------------------)
-				if(is_next(Token::PRIMARY)){
-					current_token++;
-					if(is_next(Token::KEY)){
-						current_token++;
-						//------------------------------(
-						if(!is_next(Token::LEFTPAREN))
-							throw runtime_error("Parsing Error");
-						current_token++;
-						while(!is_next(Token::RIGHTPAREN)){
-							if(!is_next(Token::IDENTIFIER))
-								throw runtime_error("Parsing Error");
-							current_token++;
-							if(!is_next(Token::COMMA))
-								break;
-							current_token++;
-						}
-						//-------------------------------)	
-					}
-				}
-				current_token++;
-			}
-		}
-	}
-	else
+
+	if(!is_next(Token::TABLE))
 		throw runtime_error("Parsing Error");
+	current_token++;
+
+	if(!is_next(Token::IDENTIFIER))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	//------------------------------(
+	if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	while(!is_next(Token::RIGHTPAREN)){
+		if(!is_next(Token::IDENTIFIER))
+			throw runtime_error("Parsing Error");
+		current_token++;
+
+		if(is_next(Token::VARCHAR)){
+			current_token++;
+			if(!is_next(Token::LEFTPAREN))
+				throw runtime_error("Parsing Error");
+			current_token++;
+			if(!is_next(Token::INTEGER))
+				throw runtime_error("Parsing Error");
+			current_token++;
+			if(!is_next(Token::RIGHTPAREN))
+				throw runtime_error("Parsing Error");
+			current_token++;
+		}
+		else if(is_next(Token::INTEGER)){
+			current_token++;
+		}
+		else
+			throw runtime_error("Parsing Error");
+
+		if(!is_next(Token::COMMA))
+			break;
+		current_token++;
+	}
+	current_token++;
+	//-------------------------------)
+	if(!is_next(Token::PRIMARY))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	if(!is_next(Token::KEY))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	//------------------------------(
+	if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	while(!is_next(Token::RIGHTPAREN)){
+		if(!is_next(Token::IDENTIFIER))
+			throw runtime_error("Parsing Error");
+		current_token++;
+		if(!is_next(Token::COMMA))
+			break;
+		current_token++;
+	}
+	//-------------------------------)	
+	current_token++;
 }
 
 void Parser::update_cmd(){
