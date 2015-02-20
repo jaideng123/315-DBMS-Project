@@ -454,7 +454,34 @@ void Parser::update_cmd(){
 		throw runtime_error("Parsing Error");
 	current_token++;
 
-	//---------------------------------------------need to do list of literals here too
+	while(!is_next(Token::WHERE)){
+		if(!is_next(Token::IDENTIFIER))
+			throw runtime_error("Parsing Error");
+		current_token++;
+		if(is_next(Token::EQ))
+			current_token++;
+		else if(is_next(Token::LT))
+			current_token++;
+		else if(is_next(Token::LEQ))
+			current_token++;
+		else if(is_next(Token::GT))
+			current_token++;
+		else if(is_next(Token::GEQ))
+			current_token++;
+		else if(is_next(Token::NEQ))
+			current_token++;
+		else if(is_next(Token::LT))
+			current_token++;
+		else
+			throw runtime_error("Parsing Error");
+
+		if(!is_next(Token::LITERAL))
+			throw runtime_error("Parsing Error");
+
+		if(!is_next(Token::COMMA))
+			break;
+		current_token++;
+	}
 
 	if(is_next(Token::WHERE)){
 		current_token++;
@@ -484,7 +511,21 @@ void Parser::insert_cmd(){
 	if(is_next(Token::RELATION)){
 		current_token++;
 		expr();
-	}//---------------------------------------DO AN ELSE HERE FOR LIST OF LITERALS ()
+	}
+	else if(is_next(Token::LEFTPAREN))
+	{
+		current_token++;
+		while(!is_next(Token::RIGHTPAREN)){
+			if(!is_next(Token::LITERAL))
+				throw runtime_error("Parsing Error");
+			current_token++;
+			if(!is_next(Token::COMMA))
+				break;
+			current_token++;
+		}
+	}
+	else
+		throw runtime_error("Parsing Error");
 }
 
 void Parser::delete_cmd(){
