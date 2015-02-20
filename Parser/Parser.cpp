@@ -298,49 +298,33 @@ void Parser::command(){
 
 	if(is_next(Token::OPEN)){
 		open_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
 	else if(is_next(Token::CLOSE)){
 		close_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
 	else if(is_next(Token::WRITE)){
 		write_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
 	else if(is_next(Token::EXIT)){
 		exit_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
 	else if(is_next(Token::SHOW)){
 		show_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
 	else if(is_next(Token::CREATE)){
 		create_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
 	else if(is_next(Token::UPDATE)){
 		update_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
 	else if(is_next(Token::INSERT)){
 		insert_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
 	else if(is_next(Token::DELETE)){
 		delete_cmd();
-		if(!is_next(Token::SEMICOLON))
-			throw runtime_error("Parsing Error");
 	}
+	if(!is_next(Token::SEMICOLON))
+		throw runtime_error("Parsing Error");
 }
 
 void Parser::open_cmd(){
@@ -471,15 +455,55 @@ void Parser::update_cmd(){
 	if(!is_next(Token::SET))
 		throw runtime_error("Parsing Error");
 	current_token++;
+
+	//---------------------------------------------need to do list of literals here too
+
+	if(is_next(Token::WHERE)){
+		current_token++;
+		condition();
+	}
+	else
+		throw runtime_error("Parsing Error");
+	
 	
 
 }
 
 void Parser::insert_cmd(){
-
+	current_token++;
+	if(!is_next(Token::INTO))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	if(!is_next(Token::IDENTIFIER))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	if(!is_next(Token::VALUES))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	if(!is_next(Token::FROM))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	if(is_next(Token::RELATION)){
+		current_token++;
+		expr();
+	}//---------------------------------------DO AN ELSE HERE FOR LIST OF LITERALS ()
 }
 
 void Parser::delete_cmd(){
+	current_token++;
+	if(!is_next(Token::FROM))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	if(!is_next(Token::IDENTIFIER))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	if(is_next(Token::WHERE)){
+		current_token++;
+		condition();
+	}
+	else
+		throw runtime_error("Parsing Error");
+	
 
 }
 //determine what the next token will be
