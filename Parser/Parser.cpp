@@ -17,14 +17,68 @@ void Parser::test_parse(vector<Token> input_tokens){
 
 //i will call this when i need it, it will start pointing
 //to the token after the left parentheses and should end
-//pointing at just before the right parentheses
+//pointing at the right parentheses
 //***edit 2/18/2015: instead of pointing after leftparen, 
 //***it points before leftparen when we get to condition()
+//***edit 2/19/2015: fixed! now points correctly
 void Parser::condition(){
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
-	while(!is_next(Token::RIGHTPAREN))
+	current_token++;
+	int paren_count = 1;
+	while(paren_count > 0){
+		if(is_next(Token::RIGHTPAREN)){
+			paren_count--;
+		}
+		else if(is_next(Token::LEFTPAREN)){
+			paren_count++;
+			current_token++;
+		}
+		else if(is_next(Token::IDENTIFIER)){
+			comparison();
+		}
+		else
+			throw runtime_error("Parsing Error");
+	}
+	current_token++;
+}
+
+void Parser::comparison(){
+	//operand 1
+	current_token++;
+	//symbol
+	if(is_next(Token::EQ))
 		current_token++;
+	else if(is_next(Token::LT))
+		current_token++;
+	else if(is_next(Token::LEQ))
+		current_token++;
+	else if(is_next(Token::GT))
+		current_token++;
+	else if(is_next(Token::GEQ))
+		current_token++;
+	else if(is_next(Token::NEQ))
+		current_token++;
+	else if(is_next(Token::LT))
+		current_token++;
+	else
+		throw runtime_error("Parsing Error");
+	//operand 2
+	if(is_next(Token::NUMBER) || is_next(Token::INTEGER))
+		current_token++;
+	else if(is_next(Token::VARCHAR) &&(
+				tokens[current_token].get_type() == Token::EQ ||
+				tokens[current_token].get_type() == Token::NEQ))
+		current_token++;
+	else
+		throw runtime_error("Parsing Error");
+	//check for conjunction
+	if(is_next(Token::AND))
+		current_token++;
+	else if(is_next(Token::OR))
+		current_token++;
+	
+	
 }
 
 //parse query
@@ -95,13 +149,7 @@ void Parser::select_expr(){
 	//select
 	current_token++;
 	//(condition)
-	if(!is_next(Token::LEFTPAREN))
-		throw runtime_error("Parsing Error");
 	condition();
-	if(!is_next(Token::RIGHTPAREN))
-		throw runtime_error("Parsing Error");
-
-	current_token++;
 	//expr
 	if(is_next(Token::IDENTIFIER))
 		current_token++;

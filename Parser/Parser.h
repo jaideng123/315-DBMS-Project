@@ -27,8 +27,13 @@ private:
 	void diff_expr();
 	void prod_expr();
 
+<<<<<<< HEAD
 	void condition();
 	
+=======
+	void condition();
+	void comparison();
+>>>>>>> 1ec87efb032cf3af4aba9717bff9e4112d7a4eac
 	void open_cmd();
 	void close_cmd();
 	void write_cmd();
