@@ -5,6 +5,7 @@ using namespace std;
 void select_test(){
 	vector<Token> test;
 	//test <- select () (select () (select (age < 5 && (name == "Eric" || name != "Tristan")) test2));
+	/*
 	test.push_back(Token(Token::IDENTIFIER,"test"));
 	test.push_back(Token(Token::LEFTARROW,"<-"));
 	test.push_back(Token(Token::SELECT,"select"));
@@ -29,14 +30,14 @@ void select_test(){
 	test.push_back(Token(Token::IDENTIFIER,"name"));
 	test.push_back(Token(Token::NEQ,"!="));
 	test.push_back(Token(Token::VARCHAR,"Tristan"));
-	test.push_back(Token(Token::RIGHTPAREN,")"));//
+	test.push_back(Token(Token::RIGHTPAREN,")"));
 	test.push_back(Token(Token::RIGHTPAREN,")"));
 	test.push_back(Token(Token::IDENTIFIER,"test2"));
 	test.push_back(Token(Token::RIGHTPAREN,")"));
 	test.push_back(Token(Token::RIGHTPAREN,")"));
-	test.push_back(Token(Token::SEMICOLON,";"));
+	test.push_back(Token(Token::SEMICOLON,";"));*/
 	Parser p;
-	p.test_parse(test);
+	p.parse("test <- select () (select () (select (age < 5 && (name == \"Eric\" || name != \"Tristan\")) test2));");
 	cout<<"Select Parsed Successfully!\n";
 }
 void rename_test(){
@@ -127,7 +128,7 @@ int main(){
 	prod_test();
 	
 	Tokenizer test("CLOSE something");
-	test.tokenizeInput();
+	test.tokenize_input();
 
 	return 0;
 }

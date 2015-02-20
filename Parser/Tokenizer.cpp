@@ -5,7 +5,7 @@ Tokenizer::Tokenizer(string line){
 	position = storedLine.begin();
 }
 
-void Tokenizer::tokenizeInput(){
+void Tokenizer::tokenize_input(){
 	while(position != storedLine.end()){
 		
 		//process whitespace - handles single space, tab, new line
