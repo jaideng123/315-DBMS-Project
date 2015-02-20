@@ -117,7 +117,7 @@ void Tokenizer::isIdentifier(){
 	string ident;
 	//Add other supported literal symbols here
 	// NOTE - literals must be lowercase or '_' !!!!!
-	while ( (current != storedLine.end()) && ( ( islower(*current)) || (*current == '_') )  ){
+	while ( (current != storedLine.end()) && ( ( islower(*current)) || (*current == '_') || isdigit(*current) )  ){
 		ident += *current;
 		++current;
 	}
@@ -194,6 +194,18 @@ void Tokenizer::lookupANDstore(string reserveWord){
 	}
 	else if( reserveWord == "VARCHAR"){
 		tokens.push_back(Token(Token::VARCHAR,""));
+		return;
+	}
+	else if( reserveWord == "SELECT"){
+		tokens.push_back(Token(Token::SELECT,""));
+		return;
+	}
+	else if( reserveWord == "RENAME"){
+		tokens.push_back(Token(Token::RENAME,""));
+		return;
+	}
+	else if( reserveWord == "PROJECT"){
+		tokens.push_back(Token(Token::PROJECT,""));
 		return;
 	}
 	
