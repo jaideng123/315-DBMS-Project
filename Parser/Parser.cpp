@@ -306,39 +306,38 @@ void Parser::prod_expr(){
 //not done
 void Parser::command(){
 
-	if(is_next(Token::OPEN)){
+	if(tokens[current_token].get_type() == Token::OPEN){
 		open_cmd();
 	}
-	else if(is_next(Token::CLOSE)){
+	else if(tokens[current_token].get_type() == Token::CLOSE){
 		close_cmd();
 	}
-	else if(is_next(Token::WRITE)){
+	else if(tokens[current_token].get_type() == Token::WRITE){
 		write_cmd();
 	}
-	else if(is_next(Token::EXIT)){
+	else if(tokens[current_token].get_type() == Token::EXIT){
 		exit_cmd();
 	}
-	else if(is_next(Token::SHOW)){
+	else if(tokens[current_token].get_type() == Token::SHOW){
 		show_cmd();
 	}
-	else if(is_next(Token::CREATE)){
+	else if(tokens[current_token].get_type() == Token::CREATE){
 		create_cmd();
 	}
-	else if(is_next(Token::UPDATE)){
+	else if(tokens[current_token].get_type() == Token::UPDATE){
 		update_cmd();
 	}
-	else if(is_next(Token::INSERT)){
+	else if(tokens[current_token].get_type() == Token::INSERT){
 		insert_cmd();
 	}
-	else if(is_next(Token::DELETE)){
+	else if(tokens[current_token].get_type() == Token::DELETE){
 		delete_cmd();
 	}
 	if(!is_next(Token::SEMICOLON))
-		throw runtime_error("Parsing Error");
+		throw runtime_error("Parsing Error here");
 }
 
 void Parser::open_cmd(){
-	current_token++;
 	if(is_next(Token::IDENTIFIER))
 		current_token++;
 	else
@@ -346,7 +345,6 @@ void Parser::open_cmd(){
 }
 
 void Parser::close_cmd(){
-	current_token++;
 	if(is_next(Token::IDENTIFIER))
 		current_token++;
 	else
@@ -354,7 +352,6 @@ void Parser::close_cmd(){
 }
 
 void Parser::write_cmd(){
-	current_token++;
 	if(is_next(Token::IDENTIFIER))
 		current_token++;
 	else
@@ -362,14 +359,12 @@ void Parser::write_cmd(){
 }
 
 void Parser::exit_cmd(){
-	current_token++;
 	if(is_next(Token::SEMICOLON))
 		return;
-	throw runtime_error("Parsing Error");
+	throw runtime_error("Parsing Error, exit call");
 }
 
 void Parser::show_cmd(){
-	current_token++;
 	if(is_next(Token::IDENTIFIER)){
 		current_token++;
 		if(is_next(Token::UNION))
@@ -381,18 +376,23 @@ void Parser::show_cmd(){
 		else if(is_next(Token::SEMICOLON))
 			return;
 	}
+	else if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
 	if(is_next(Token::SELECT))
 		select_expr();
 	else if(is_next(Token::RENAME))
 		rename_expr();
 	else if(is_next(Token::PROJECT))
 		project_expr();
+	if(!is_next(Token::RIGHTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	
 	return;
 }
 
 void Parser::create_cmd(){
-	current_token++;
-
 	if(!is_next(Token::TABLE))
 		throw runtime_error("Parsing Error");
 	current_token++;
@@ -456,7 +456,6 @@ void Parser::create_cmd(){
 }
 
 void Parser::update_cmd(){
-	current_token++;
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
 	current_token++;
@@ -487,7 +486,7 @@ void Parser::update_cmd(){
 
 		if(!is_next(Token::LITERAL))
 			throw runtime_error("Parsing Error");
-
+		current_token++;
 		if(!is_next(Token::COMMA))
 			break;
 		current_token++;
@@ -505,18 +504,17 @@ void Parser::update_cmd(){
 }
 
 void Parser::insert_cmd(){
-	current_token++;
 	if(!is_next(Token::INTO))
-		throw runtime_error("Parsing Error");
+		throw runtime_error("Parsing Error5");
 	current_token++;
 	if(!is_next(Token::IDENTIFIER))
-		throw runtime_error("Parsing Error");
+		throw runtime_error("Parsing Error4");
 	current_token++;
 	if(!is_next(Token::VALUES))
-		throw runtime_error("Parsing Error");
+		throw runtime_error("Parsing Error3");
 	current_token++;
 	if(!is_next(Token::FROM))
-		throw runtime_error("Parsing Error");
+		throw runtime_error("Parsing Error6");
 	current_token++;
 	if(is_next(Token::RELATION)){
 		current_token++;
@@ -527,19 +525,19 @@ void Parser::insert_cmd(){
 		current_token++;
 		while(!is_next(Token::RIGHTPAREN)){
 			if(!is_next(Token::LITERAL))
-				throw runtime_error("Parsing Error");
+				throw runtime_error("Parsing Error1");
 			current_token++;
 			if(!is_next(Token::COMMA))
 				break;
 			current_token++;
 		}
+		current_token++;
 	}
 	else
-		throw runtime_error("Parsing Error");
+		throw runtime_error("Parsing Error2");
 }
 
 void Parser::delete_cmd(){
-	current_token++;
 	if(!is_next(Token::FROM))
 		throw runtime_error("Parsing Error");
 	current_token++;
