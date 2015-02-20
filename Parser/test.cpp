@@ -119,5 +119,9 @@ int main(){
 	union_test();
 	diff_test();
 	prod_test();
+	
+	Tokenizer test("CLOSE something");
+	test.tokenizeInput();
+
 	return 0;
 }

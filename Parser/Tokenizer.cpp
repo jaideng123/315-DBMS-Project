@@ -1,45 +1,63 @@
 #include "Tokenizer.h"
 
 Tokenizer::Tokenizer(string line){
-	string::iterator position = line.begin();
-	tokenizeInput(line, position);
+	storedLine = line;
+	position = storedLine.begin();
 }
 
-void Tokenizer::tokenizeInput(string line, string::iterator position){
-	while(position != line.end()){
+void Tokenizer::tokenizeInput(){
+	while(position != storedLine.end()){
 		
 		//process whitespace - handles single space, tab, new line
 		if((*position == ' ') || (*position == '\n') || (*position == '\t')){
-			position ++;
+			++position;
 		}
 		//check if alpaha
-		if(isalpha(*position)){
+		else if(isalpha(*position)) {
 			//Check if reserve word
-			if(isupper(*position)){
-				isReserveWord(line, position);
+			if(isupper(*position)) {
+				isReserveWord();
 			}
-			else{
-				//If not it must be literal
-				isLiteral(line, position);
+			else if(islower(*position)) {
+				
+				isIdentifier();
 			}
 		}
-		if(ispunct(*position)){
-			isSymbol(line, position);
+		//Look for literals
+		else if(*position == '"') {
+			isLiteral();
 		}
-
+		else if(ispunct(*position)) {
+			isSymbol();
+		}
+		else if(isdigit(*position)) {
+			isNumber();
+		}
 		
-
+		
 	}
 }
 
+void Tokenizer::isNumber(){
+	string::iterator current = position;
+	string numbers;
+	while ((current != storedLine.end()) && isdigit(*current)){
+		numbers += *current;
+		++current;
+	}
+	position += numbers.size();
+
+	tokens.push_back(Token(Token::NUMBER, numbers));
+}
+
 //Will push_back to vector if true
-void Tokenizer::isReserveWord(string line, string::iterator &position){
+void Tokenizer::isReserveWord(){
 	string::iterator current = position;
 	string word;
 	//Get complete word - Checks for whitespace and parenthesis
-	while( (!(isspace(*current ))) || (*current != '(') || (*current != ')') ) {
+	while ( (current != storedLine.end()) && (!(isspace(*current))) && (*current != '(') && (*current != ')')) {
 		word += *current;
-		current++;
+		++current;
 	}
 	
 	/*
@@ -66,30 +84,46 @@ void Tokenizer::isReserveWord(string line, string::iterator &position){
 	lookupANDstore(word);
 }	
 
-void Tokenizer::isSymbol(string line, string::iterator &position){
+void Tokenizer::isSymbol(){
 	string::iterator current = position;
 	string symbol;
-	while(ispunct(*current)){
+	while ((current != storedLine.end()) && ispunct(*current)){
 		symbol += *current;
-		current++;
+		++current;
 	}
 	position += symbol.size();
 	lookupANDstore(symbol);
 
 }
 
-void Tokenizer::isLiteral(string line,string::iterator &position){
+void Tokenizer::isLiteral(){
 	string::iterator current = position;
 	string lit;
 	//Add other supported literal symbols here
 	// NOTE - literals must be lowercase or '_' !!!!!
-	while( (islower(*current)) || (*current == '_') ){
-		lit += *current;
-		current++;
-	}
-	position += lit.size();
+	if(*current == '"'){
+		while ( (current != storedLine.end()) && *current != '"'){
+			lit += *current;
+			++current;
+		}
+		position += (lit.size()+1);
 
-	tokens.push_back(Token(Token::IDENTIFIER, lit));
+		tokens.push_back(Token(Token::LITERAL, lit));
+	}
+}
+
+void Tokenizer::isIdentifier(){
+	string::iterator current = position;
+	string ident;
+	//Add other supported literal symbols here
+	// NOTE - literals must be lowercase or '_' !!!!!
+	while ( (current != storedLine.end()) && ( ( islower(*current)) || (*current == '_') )  ){
+		ident += *current;
+		++current;
+	}
+	position += ident.size();
+
+	tokens.push_back(Token(Token::IDENTIFIER, ident));
 }
 
 
@@ -162,10 +196,7 @@ void Tokenizer::lookupANDstore(string reserveWord){
 		tokens.push_back(Token(Token::VARCHAR,""));
 		return;
 	}
-	else if( reserveWord == "NUMBER"){
-		tokens.push_back(Token(Token::NUMBER,""));
-		return;
-	}
+	
 	//*************************************
 	//Symbol Section
 	else if( reserveWord == "+"){

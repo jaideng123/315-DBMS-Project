@@ -6,17 +6,23 @@
 #include <string>
 #include <vector>
 #include <cctype>
+#include <iostream>
 
 class Tokenizer{
 public:
 	Tokenizer(string line);
-	void tokenizeInput(string line, string::iterator position);
-	void isReserveWord(string line, string::iterator &position);	//Will pushback to vector if true
-	void isSymbol(string line, string::iterator &position);	
-	void isLiteral(string line,string::iterator &position);
+
+	void tokenizeInput();
+	void isReserveWord();	//Will pushback to vector if true
+	void isSymbol();	
+	void isLiteral();
+	void isIdentifier();
+	void isNumber();
 	void lookupANDstore(string reserveWord);
-private:
 	vector<Token> tokens;
+private:
+	string storedLine;
+	string::iterator position;
 };
 
 #endif
