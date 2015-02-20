@@ -12,7 +12,7 @@ class Tokenizer{
 public:
 	Tokenizer(string line);
 
-	void tokenizeInput();
+	void tokenize_input();
 	void isReserveWord();	//Will pushback to vector if true
 	void isSymbol();	
 	void isLiteral();

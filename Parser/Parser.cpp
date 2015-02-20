@@ -12,15 +12,25 @@ void Parser::test_parse(vector<Token> input_tokens){
 	else{
 		command();
 	}
+}
+void Parser::parse(string input){
+	Tokenizer tokenizer(input);
+	tokenizer.tokenize_input();
+	tokens = tokenizer.tokens;
+	current_token = 0;
+	if(tokens[current_token].get_type() == Token::IDENTIFIER){
+		query();
+	}
+	else{
+		command();
+	}
 
 }
 
-//i will call this when i need it, it will start pointing
-//to the token after the left parentheses and should end
-//pointing at the right parentheses
-//***edit 2/18/2015: instead of pointing after leftparen, 
-//***it points before leftparen when we get to condition()
-//***edit 2/19/2015: fixed! now points correctly
+
+//for condition parsing, it will start pointing
+//to the first left parentheses and should end
+//pointing at the last right parentheses
 void Parser::condition(){
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
@@ -29,6 +39,7 @@ void Parser::condition(){
 	while(paren_count > 0){
 		if(is_next(Token::RIGHTPAREN)){
 			paren_count--;
+			current_token++;
 		}
 		else if(is_next(Token::LEFTPAREN)){
 			paren_count++;
@@ -40,7 +51,6 @@ void Parser::condition(){
 		else
 			throw runtime_error("Parsing Error");
 	}
-	current_token++;
 }
 
 void Parser::comparison(){

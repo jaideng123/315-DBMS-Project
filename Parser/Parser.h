@@ -8,7 +8,7 @@ class Parser{
 public:
 	Parser(){}
 
-	void parse(string input){}//use test_parse till tokenizer is done
+	void parse(string input);
 	void test_parse(vector<Token> tokens);
 
 private:
