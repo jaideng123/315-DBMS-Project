@@ -19,8 +19,7 @@ void Tokenizer::tokenize_input(){
 			if(isupper(*position)) {
 				is_reserve_word();
 			}
-			else if(islower(*position)) {
-				
+			else{
 				is_identifier();
 			}
 		}
@@ -28,9 +27,11 @@ void Tokenizer::tokenize_input(){
 		else if(*position == '\"') {
 			is_literal();
 		}
+		//look for symbols
 		else if(ispunct(*position)) {
 			is_symbol();
 		}
+		//look for digits
 		else if(isdigit(*position)) {
 			is_number();
 		}
@@ -66,7 +67,7 @@ void Tokenizer::is_reserve_word(){
 	//Update position to end of word
 	position += word.size();
 
-	lookupANDstore(word);
+	lookup(word);
 }	
 
 void Tokenizer::is_symbol(){
@@ -80,15 +81,13 @@ void Tokenizer::is_symbol(){
 		++current;
 	}
 	position += symbol.size();
-	lookupANDstore(symbol);
-
+	lookup(symbol);
 }
 
+//create and store literals
 void Tokenizer::is_literal(){
 	string::iterator current = position;
 	string lit;
-	//Add other supported literal symbols here
-	// NOTE - literals must be lowercase or '_' !!!!!
 	if(*current == '\"'){
 		++current;
 		while ( (current != storedLine.end()) && *current != '\"'){
@@ -101,12 +100,12 @@ void Tokenizer::is_literal(){
 	}
 }
 
+//create and store identifier
 void Tokenizer::is_identifier(){
 	string::iterator current = position;
 	string ident;
-	//Add other supported literal symbols here
-	// NOTE - literals must be lowercase or '_' !!!!!
-	while ( (current != storedLine.end()) && ( ( islower(*current)) || (*current == '_') || isdigit(*current) )  ){
+	while ( (current != storedLine.end()) && ( ( isalpha(*current)) || 
+		(*current == '_') || isdigit(*current) )  ){
 		ident += *current;
 		++current;
 	}
@@ -115,8 +114,8 @@ void Tokenizer::is_identifier(){
 	tokens.push_back(Token(Token::IDENTIFIER, ident));
 }
 
-
-void Tokenizer::lookupANDstore(string reserveWord){
+//lookup word and store int tokens vector
+void Tokenizer::lookup(string reserveWord){
 	if( reserveWord == "OPEN"){
 		tokens.push_back(Token(Token::OPEN,""));
 		return;

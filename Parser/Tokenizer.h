@@ -22,7 +22,7 @@ private:
 	void is_literal();
 	void is_identifier();
 	void is_number();
-	void lookupANDstore(string reserveWord);
+	void lookup(string reserveWord);
 	vector<Token> tokens;
 	string storedLine;
 	string::iterator position;
