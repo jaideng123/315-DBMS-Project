@@ -9,7 +9,7 @@ Tokenizer::Tokenizer(string line){
 void Tokenizer::tokenize_input(){
 	while(position != storedLine.end()){
 		
-		//process whitespace - handles single space, tab, new line
+		//skip whitespace - handles single space, tab, new line
 		if((*position == ' ') || (*position == '\n') || (*position == '\t')){
 			++position;
 		}
