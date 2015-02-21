@@ -280,5 +280,7 @@ void Tokenizer::lookupANDstore(string reserveWord){
 		tokens.push_back(Token(Token::SEMICOLON,""));
 		return;
 	}
+	else
+		throw runtime_error("Tokenizing error");
 }
 

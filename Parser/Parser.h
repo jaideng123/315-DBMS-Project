@@ -9,7 +9,6 @@ public:
 	Parser(){}
 
 	void parse(string input);
-	void test_parse(vector<Token> tokens);
 
 private:
 	vector<Token> tokens;

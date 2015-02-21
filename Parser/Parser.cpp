@@ -3,16 +3,6 @@
 
 using namespace std;
 
-void Parser::test_parse(vector<Token> input_tokens){
-	tokens = input_tokens;
-	current_token = 0;
-	if(tokens[current_token].get_type() == Token::IDENTIFIER){
-		query();
-	}
-	else{
-		command();
-	}
-}
 void Parser::parse(string input){
 	Tokenizer t(input);
 	tokens = t.get_tokens();
@@ -24,70 +14,6 @@ void Parser::parse(string input){
 		command();
 	}
 
-}
-
-
-//for condition parsing, it will start pointing
-//at the first left parentheses and should end
-//pointing at the last right parentheses
-void Parser::condition(){
-	if(!is_next(Token::LEFTPAREN))
-		throw runtime_error("Parsing Error");
-	current_token++;
-	int paren_count = 1;
-	while(paren_count > 0){
-		if(is_next(Token::RIGHTPAREN)){
-			paren_count--;
-			current_token++;
-		}
-		else if(is_next(Token::LEFTPAREN)){
-			paren_count++;
-			current_token++;
-		}
-		else if(is_next(Token::IDENTIFIER)){
-			comparison();
-		}
-		else
-			throw runtime_error("Parsing Error");
-	}
-}
-
-void Parser::comparison(){
-	//operand 1
-	current_token++;
-	//symbol
-	if(is_next(Token::EQ))
-		current_token++;
-	else if(is_next(Token::LT))
-		current_token++;
-	else if(is_next(Token::LEQ))
-		current_token++;
-	else if(is_next(Token::GT))
-		current_token++;
-	else if(is_next(Token::GEQ))
-		current_token++;
-	else if(is_next(Token::NEQ))
-		current_token++;
-	else if(is_next(Token::LT))
-		current_token++;
-	else
-		throw runtime_error("Parsing Error");
-	//operand 2
-	if(is_next(Token::NUMBER) || is_next(Token::INTEGER))
-		current_token++;
-	else if(is_next(Token::LITERAL) &&(
-				tokens[current_token].get_type() == Token::EQ ||
-				tokens[current_token].get_type() == Token::NEQ))
-		current_token++;
-	else
-		throw runtime_error("Parsing Error");
-	//check for conjunction
-	if(is_next(Token::AND))
-		current_token++;
-	else if(is_next(Token::OR))
-		current_token++;
-	
-	
 }
 
 //parse query
@@ -301,8 +227,68 @@ void Parser::prod_expr(){
 		throw runtime_error("Parsing Error");
 	return;
 }
-//HOLEE
-//not done
+//for condition parsing, it will start pointing
+//at the first left parentheses and should end
+//pointing at the last right parentheses
+void Parser::condition(){
+	if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	int paren_count = 1;
+	while(paren_count > 0){
+		if(is_next(Token::RIGHTPAREN)){
+			paren_count--;
+			current_token++;
+		}
+		else if(is_next(Token::LEFTPAREN)){
+			paren_count++;
+			current_token++;
+		}
+		else if(is_next(Token::IDENTIFIER)){
+			comparison();
+		}
+		else
+			throw runtime_error("Parsing Error");
+	}
+}
+
+//for comparisons in condition
+void Parser::comparison(){
+	//operand 1
+	current_token++;
+	//symbol
+	if(is_next(Token::EQ))
+		current_token++;
+	else if(is_next(Token::LT))
+		current_token++;
+	else if(is_next(Token::LEQ))
+		current_token++;
+	else if(is_next(Token::GT))
+		current_token++;
+	else if(is_next(Token::GEQ))
+		current_token++;
+	else if(is_next(Token::NEQ))
+		current_token++;
+	else if(is_next(Token::LT))
+		current_token++;
+	else
+		throw runtime_error("Parsing Error");
+	//operand 2
+	if(is_next(Token::NUMBER) || is_next(Token::INTEGER))
+		current_token++;
+	else if(is_next(Token::LITERAL) &&(
+				tokens[current_token].get_type() == Token::EQ ||
+				tokens[current_token].get_type() == Token::NEQ))
+		current_token++;
+	else
+		throw runtime_error("Parsing Error");
+	//check for conjunction
+	if(is_next(Token::AND))
+		current_token++;
+	else if(is_next(Token::OR))
+		current_token++;
+}
+
 void Parser::command(){
 
 	if(tokens[current_token].get_type() == Token::OPEN){
@@ -332,8 +318,9 @@ void Parser::command(){
 	else if(tokens[current_token].get_type() == Token::DELETE){
 		delete_cmd();
 	}
-	if(!is_next(Token::SEMICOLON))
-		throw runtime_error("Parsing Error here");
+	else
+		throw runtime_error("Parsing Error");
+	return;
 }
 
 void Parser::open_cmd(){
@@ -360,7 +347,7 @@ void Parser::write_cmd(){
 void Parser::exit_cmd(){
 	if(is_next(Token::SEMICOLON))
 		return;
-	throw runtime_error("Parsing Error, exit call");
+	throw runtime_error("Parsing Error");
 }
 
 void Parser::show_cmd(){
@@ -490,16 +477,16 @@ void Parser::update_cmd(){
 
 void Parser::insert_cmd(){
 	if(!is_next(Token::INTO))
-		throw runtime_error("Parsing Error5");
+		throw runtime_error("Parsing Error");
 	current_token++;
 	if(!is_next(Token::IDENTIFIER))
-		throw runtime_error("Parsing Error4");
+		throw runtime_error("Parsing Error");
 	current_token++;
 	if(!is_next(Token::VALUES))
-		throw runtime_error("Parsing Error3");
+		throw runtime_error("Parsing Error");
 	current_token++;
 	if(!is_next(Token::FROM))
-		throw runtime_error("Parsing Error6");
+		throw runtime_error("Parsing Error");
 	current_token++;
 	if(is_next(Token::RELATION)){
 		current_token++;
@@ -510,7 +497,7 @@ void Parser::insert_cmd(){
 		current_token++;
 		while(!is_next(Token::RIGHTPAREN)){
 			if(!is_next(Token::LITERAL))
-				throw runtime_error("Parsing Error1");
+				throw runtime_error("Parsing Error");
 			current_token++;
 			if(!is_next(Token::COMMA))
 				break;
@@ -519,7 +506,7 @@ void Parser::insert_cmd(){
 		current_token++;
 	}
 	else
-		throw runtime_error("Parsing Error2");
+		throw runtime_error("Parsing Error");
 }
 
 void Parser::delete_cmd(){

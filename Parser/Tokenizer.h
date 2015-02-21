@@ -9,7 +9,7 @@
 
 class Tokenizer{
 public:
-	Tokenizer(string line);s
+	Tokenizer(string line);
 	vector<Token> get_tokens(){
 		tokens.clear();
 		tokenize_input();
@@ -17,7 +17,7 @@ public:
 	}
 private:
 	void tokenize_input();
-	void is_reserve_word();	//Will pushback to vector if true
+	void is_reserve_word();
 	void is_symbol();	
 	void is_literal();
 	void is_identifier();
