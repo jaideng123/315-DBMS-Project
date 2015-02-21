@@ -1,7 +1,6 @@
 #ifndef _tokenizer_h_                   // include file only once
 #define _tokenizer_h_
 
-//Takes a string, contains a function that returns a vector of tokens
 #include "Token.h"
 #include <string>
 #include <vector>
@@ -10,17 +9,21 @@
 
 class Tokenizer{
 public:
-	Tokenizer(string line);
-
+	Tokenizer(string line);s
+	vector<Token> get_tokens(){
+		tokens.clear();
+		tokenize_input();
+		return tokens;
+	}
+private:
 	void tokenize_input();
-	void isReserveWord();	//Will pushback to vector if true
-	void isSymbol();	
-	void isLiteral();
-	void isIdentifier();
-	void isNumber();
+	void is_reserve_word();	//Will pushback to vector if true
+	void is_symbol();	
+	void is_literal();
+	void is_identifier();
+	void is_number();
 	void lookupANDstore(string reserveWord);
 	vector<Token> tokens;
-private:
 	string storedLine;
 	string::iterator position;
 };

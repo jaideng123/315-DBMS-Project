@@ -14,9 +14,8 @@ void Parser::test_parse(vector<Token> input_tokens){
 	}
 }
 void Parser::parse(string input){
-	Tokenizer tokenizer(input);
-	tokenizer.tokenize_input();
-	tokens = tokenizer.tokens;
+	Tokenizer t(input);
+	tokens = t.get_tokens();
 	current_token = 0;
 	if(tokens[current_token].get_type() == Token::IDENTIFIER){
 		query();
@@ -29,7 +28,7 @@ void Parser::parse(string input){
 
 
 //for condition parsing, it will start pointing
-//to the first left parentheses and should end
+//at the first left parentheses and should end
 //pointing at the last right parentheses
 void Parser::condition(){
 	if(!is_next(Token::LEFTPAREN))

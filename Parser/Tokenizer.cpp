@@ -17,22 +17,22 @@ void Tokenizer::tokenize_input(){
 		else if(isalpha(*position)) {
 			//Check if reserve word
 			if(isupper(*position)) {
-				isReserveWord();
+				is_reserve_word();
 			}
 			else if(islower(*position)) {
 				
-				isIdentifier();
+				is_identifier();
 			}
 		}
 		//Look for literals
 		else if(*position == '\"') {
-			isLiteral();
+			is_literal();
 		}
 		else if(ispunct(*position)) {
-			isSymbol();
+			is_symbol();
 		}
 		else if(isdigit(*position)) {
-			isNumber();
+			is_number();
 		}
 		else
 			throw runtime_error("Tokenizing error");
@@ -40,7 +40,7 @@ void Tokenizer::tokenize_input(){
 	}
 }
 
-void Tokenizer::isNumber(){
+void Tokenizer::is_number(){
 	string::iterator current = position;
 	string numbers;
 	while ((current != storedLine.end()) && isdigit(*current)){
@@ -53,7 +53,7 @@ void Tokenizer::isNumber(){
 }
 
 //Will push_back to vector if true
-void Tokenizer::isReserveWord(){
+void Tokenizer::is_reserve_word(){
 	string::iterator current = position;
 	string word;
 	//Get complete word - Checks for whitespace and parentheses
@@ -69,7 +69,7 @@ void Tokenizer::isReserveWord(){
 	lookupANDstore(word);
 }	
 
-void Tokenizer::isSymbol(){
+void Tokenizer::is_symbol(){
 	string::iterator current = position;
 	string symbol;
 	while ((current != storedLine.end()) && ispunct(*current)){
@@ -84,7 +84,7 @@ void Tokenizer::isSymbol(){
 
 }
 
-void Tokenizer::isLiteral(){
+void Tokenizer::is_literal(){
 	string::iterator current = position;
 	string lit;
 	//Add other supported literal symbols here
@@ -101,7 +101,7 @@ void Tokenizer::isLiteral(){
 	}
 }
 
-void Tokenizer::isIdentifier(){
+void Tokenizer::is_identifier(){
 	string::iterator current = position;
 	string ident;
 	//Add other supported literal symbols here
