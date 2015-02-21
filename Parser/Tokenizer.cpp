@@ -1,4 +1,5 @@
 #include "Tokenizer.h"
+#include <stdexcept>
 
 Tokenizer::Tokenizer(string line){
 	storedLine = line;
@@ -24,7 +25,7 @@ void Tokenizer::tokenize_input(){
 			}
 		}
 		//Look for literals
-		else if(*position == '"') {
+		else if(*position == '\"') {
 			isLiteral();
 		}
 		else if(ispunct(*position)) {
@@ -33,7 +34,8 @@ void Tokenizer::tokenize_input(){
 		else if(isdigit(*position)) {
 			isNumber();
 		}
-		
+		else
+			throw runtime_error("Tokenizing error");
 		
 	}
 }
@@ -54,30 +56,13 @@ void Tokenizer::isNumber(){
 void Tokenizer::isReserveWord(){
 	string::iterator current = position;
 	string word;
-	//Get complete word - Checks for whitespace and parenthesis
-	while ( (current != storedLine.end()) && (!(isspace(*current))) && (*current != '(') && (*current != ')')) {
+	//Get complete word - Checks for whitespace and parentheses
+	while ( (current != storedLine.end()) && (!(isspace(*current))) && 
+			(*current != '(') && (*current != ')') && (*current != ';')) {
 		word += *current;
 		++current;
 	}
 	
-	/*
-		Omit because Tristian said so. All glory to the hypnotoad
-
-	//Grabs the Second part of reserve word sperarted by space
-	if((word == "CREATE") || (word == "INSERT") || (word == "DELETE") || (word == "VALUES") || (word == "PRIMARY") ){
-		//Skip only a single space between two part Reserve word
-		if(*current == ' '){
-			current++;
-			word += *current;
-		
-			//Grabs second part of full word
-			while( (!(isspace(*current ))) || (*current != '(') || (*current != ')') ) {
-				word += *current
-				current++;
-			}
-		}
-	}
-	*/
 	//Update position to end of word
 	position += word.size();
 
@@ -89,6 +74,9 @@ void Tokenizer::isSymbol(){
 	string symbol;
 	while ((current != storedLine.end()) && ispunct(*current)){
 		symbol += *current;
+		if(symbol == ")" || symbol == "(" || symbol == ";" || 
+			symbol == "," || symbol == "\"")
+			break;
 		++current;
 	}
 	position += symbol.size();
@@ -101,12 +89,13 @@ void Tokenizer::isLiteral(){
 	string lit;
 	//Add other supported literal symbols here
 	// NOTE - literals must be lowercase or '_' !!!!!
-	if(*current == '"'){
-		while ( (current != storedLine.end()) && *current != '"'){
+	if(*current == '\"'){
+		++current;
+		while ( (current != storedLine.end()) && *current != '\"'){
 			lit += *current;
 			++current;
 		}
-		position += (lit.size()+1);
+		position += lit.size()+2;
 
 		tokens.push_back(Token(Token::LITERAL, lit));
 	}
@@ -168,7 +157,7 @@ void Tokenizer::lookupANDstore(string reserveWord){
 		tokens.push_back(Token(Token::UPDATE,""));
 		return;
 	}
-	else if( reserveWord == "SET"){	//START HERE
+	else if( reserveWord == "SET"){
 		tokens.push_back(Token(Token::SET,""));
 		return;
 	}
@@ -192,8 +181,16 @@ void Tokenizer::lookupANDstore(string reserveWord){
 		tokens.push_back(Token(Token::FROM,""));
 		return;
 	}
+	else if( reserveWord == "RELATION"){
+		tokens.push_back(Token(Token::RELATION,""));
+		return;
+	}
 	else if( reserveWord == "VARCHAR"){
 		tokens.push_back(Token(Token::VARCHAR,""));
+		return;
+	}
+	else if( reserveWord == "VALUES"){
+		tokens.push_back(Token(Token::VALUES,""));
 		return;
 	}
 	else if( reserveWord == "SELECT"){
@@ -208,9 +205,13 @@ void Tokenizer::lookupANDstore(string reserveWord){
 		tokens.push_back(Token(Token::PROJECT,""));
 		return;
 	}
-	
+	else if( reserveWord == "INTEGER"){
+		tokens.push_back(Token(Token::INTEGER,""));
+		return;
+	}
 	//*************************************
 	//Symbol Section
+	//*************************************
 	else if( reserveWord == "+"){
 		tokens.push_back(Token(Token::UNION,""));
 		return;
@@ -280,3 +281,4 @@ void Tokenizer::lookupANDstore(string reserveWord){
 		return;
 	}
 }
+

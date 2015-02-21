@@ -76,7 +76,7 @@ void Parser::comparison(){
 	//operand 2
 	if(is_next(Token::NUMBER) || is_next(Token::INTEGER))
 		current_token++;
-	else if(is_next(Token::VARCHAR) &&(
+	else if(is_next(Token::LITERAL) &&(
 				tokens[current_token].get_type() == Token::EQ ||
 				tokens[current_token].get_type() == Token::NEQ))
 		current_token++;
@@ -414,7 +414,7 @@ void Parser::create_cmd(){
 			if(!is_next(Token::LEFTPAREN))
 				throw runtime_error("Parsing Error");
 			current_token++;
-			if(!is_next(Token::INTEGER))
+			if(!is_next(Token::NUMBER))
 				throw runtime_error("Parsing Error");
 			current_token++;
 			if(!is_next(Token::RIGHTPAREN))
@@ -467,23 +467,9 @@ void Parser::update_cmd(){
 		if(!is_next(Token::IDENTIFIER))
 			throw runtime_error("Parsing Error");
 		current_token++;
-		if(is_next(Token::EQ))
-			current_token++;
-		else if(is_next(Token::LT))
-			current_token++;
-		else if(is_next(Token::LEQ))
-			current_token++;
-		else if(is_next(Token::GT))
-			current_token++;
-		else if(is_next(Token::GEQ))
-			current_token++;
-		else if(is_next(Token::NEQ))
-			current_token++;
-		else if(is_next(Token::LT))
-			current_token++;
-		else
+		if(!is_next(Token::EQUALSIGN))
 			throw runtime_error("Parsing Error");
-
+		current_token++;
 		if(!is_next(Token::LITERAL))
 			throw runtime_error("Parsing Error");
 		current_token++;
