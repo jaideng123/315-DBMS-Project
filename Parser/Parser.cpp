@@ -8,7 +8,9 @@ void Parser::parse(string input){
 	tokens = t.get_tokens();
 	current_token = 0;
 	if(tokens[current_token].get_type() == Token::IDENTIFIER){
-		query();
+		Table t = query();
+		t.set_name(tokens[current_token].get_value());
+		db->tables.push_back(t);
 	}
 	else{
 		command();
