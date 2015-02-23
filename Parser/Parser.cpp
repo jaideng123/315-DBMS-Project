@@ -17,46 +17,58 @@ void Parser::parse(string input){
 }
 
 //parse query
-void Parser::query(){
+Table Parser::query(){
 
 	if(!is_next(Token::LEFTARROW))
 		throw runtime_error("Parsing Error");
 	current_token++;
-	expr();
+	return expr();
 	if(!is_next(Token::SEMICOLON))
 		throw runtime_error("Parsing Error");
 }
 
 //determine type of expression
-void Parser::expr(){
+Table Parser::expr(){
 	if(is_next(Token::SELECT))
-		select_expr();
+		return select_expr();
 		
 	else if(is_next(Token::RENAME))
-		rename_expr();
+		return rename_expr();
 		
 	else if(is_next(Token::PROJECT))
-		project_expr();
+		return project_expr();
 		
 	else if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		Table t = db->get_table(tokens[current_token].get_value());
 		if(is_next(Token::UNION))
-			union_expr();
+			return union_expr(t);
 		else if(is_next(Token::DIFF))
-			diff_expr();
+			return diff_expr(t);
 		else if(is_next(Token::PRODUCT))
-			prod_expr();
-		else if(is_next(Token::SEMICOLON))
-			return;
+			return prod_expr(t);
+		else if(is_next(Token::SEMICOLON) || is_next(Token::RIGHTPAREN))
+			return db->get_table(tokens[current_token].get_value());
 		else
 			throw runtime_error("Parsing Error");
 	}
 	
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
-		atomic_expr();
+		Table t = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
+		current_token++;
+		if(is_next(Token::UNION))
+			return union_expr(t);
+		else if(is_next(Token::DIFF))
+			return diff_expr(t);
+		else if(is_next(Token::PRODUCT))
+			return prod_expr(t);
+		else{
+			current_token--;
+			return t;
+		}
 	}
 	
 	else
@@ -65,53 +77,62 @@ void Parser::expr(){
 
 //for nested instructions
 //takes atomic expression without ()
-void Parser::atomic_expr(){
-	if(is_next(Token::IDENTIFIER))
+Table Parser::atomic_expr(){
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		return db->get_table(tokens[current_token].get_value());
+	}
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
-		atomic_expr();
+		Table t = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
+		return t;
 	}
 	else{
-		expr();
+		return expr();
 	}
 }
 
 //for select expressions
-void Parser::select_expr(){
+Table Parser::select_expr(){
 	//select
 	current_token++;
 	//(condition)
 	condition();
+	vector<int> sel;
 	//expr
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		Table t = db->get_table(tokens[current_token].get_value());
+		return db->set_select(t,sel);
+	}
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
-		atomic_expr();
+		Table t = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		return db->set_select(t,sel);
 	}
 	else
 		throw runtime_error("Parsing Error");
-	return;
 }
 
 //for rename expressions
-void Parser::rename_expr(){
+Table Parser::rename_expr(){
 	//rename
 	current_token++;
 	//(attr_list)
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	vector<string> new_attr;
 	while(!is_next(Token::RIGHTPAREN)){
 		if(!is_next(Token::IDENTIFIER))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		new_attr.push_back(tokens[current_token].get_value());
 		if(!is_next(Token::COMMA))
 			break;
 		current_token++;
@@ -120,32 +141,37 @@ void Parser::rename_expr(){
 		throw runtime_error("Parsing Error");
 	current_token++;
 	//expr
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		Table t = db->get_table(tokens[current_token].get_value());
+		return db->set_rename(t,new_attr);
+	}
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
-		atomic_expr();
+		Table t = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		return db->set_rename(t,new_attr);
 	}
 	else
 		throw runtime_error("Parsing Error");
-	return;
 }
 
 //for project expressions
-void Parser::project_expr(){
+Table Parser::project_expr(){
 	//project
 	current_token++;
 	//(attr_list)
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	vector<string> sel_attr;
 	while(!is_next(Token::RIGHTPAREN)){
 		if(!is_next(Token::IDENTIFIER))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		sel_attr.push_back(tokens[current_token].get_value());
 		if(!is_next(Token::COMMA))
 			break;
 		current_token++;
@@ -154,78 +180,87 @@ void Parser::project_expr(){
 		throw runtime_error("Parsing Error");
 	current_token++;
 	//expr
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		Table t = db->get_table(tokens[current_token].get_value());
+		return db->set_project(t,sel_attr);
+	}
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
-		atomic_expr();
+		Table t = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		return db->set_project(t,sel_attr);
 	}
 	else
 		throw runtime_error("Parsing Error");
-	return;
 }
 
 //for union expressions
-void Parser::union_expr(){
-	//identifier is current token here
+Table Parser::union_expr(Table t1){
 	//+ 
 	current_token++;
 	//expr
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		Table t2 = db->get_table(tokens[current_token].get_value());
+		return db->set_union(t1,t2);
+	}
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
-		atomic_expr();
+		Table t2 = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		return db->set_union(t1,t2);
 	}
 	else
 		throw runtime_error("Parsing Error");
-	return;
 }
 
 //for difference expressions
-void Parser::diff_expr(){
-	//identifier is current token here
+Table Parser::diff_expr(Table t1){
 	//- 
 	current_token++;
 	//expr
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		Table t2 = db->get_table(tokens[current_token].get_value());
+		return db->set_difference(t1,t2);
+	}
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
-		atomic_expr();
+		Table t2 = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		return db->set_difference(t1,t2);
 	}
 	else
 		throw runtime_error("Parsing Error");
-	return;
 }
 
 //for product expressions
-void Parser::prod_expr(){
-	//identifier is current token here
-	//- 
+Table Parser::prod_expr(Table t1){
+	//*
 	current_token++;
 	//expr
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		Table t2 = db->get_table(tokens[current_token].get_value());
+		return db->set_product(t1,t2);
+	}
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
-		atomic_expr();
+		Table t2 = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		return db->set_difference(t1,t2);
 	}
 	else
 		throw runtime_error("Parsing Error");
-	return;
 }
 //for condition parsing, it will start pointing
 //at the first left parentheses and should end
@@ -351,30 +386,9 @@ void Parser::exit_cmd(){
 }
 
 void Parser::show_cmd(){
-	if(is_next(Token::IDENTIFIER)){
-		current_token++;
-		if(is_next(Token::UNION))
-			union_expr();
-		else if(is_next(Token::DIFF))
-			diff_expr();
-		else if(is_next(Token::PRODUCT))
-			prod_expr();
-		else if(is_next(Token::SEMICOLON))
-			return;
-	}
-	else if(!is_next(Token::LEFTPAREN))
-		throw runtime_error("Parsing Error");
 	current_token++;
-	if(is_next(Token::SELECT))
-		select_expr();
-	else if(is_next(Token::RENAME))
-		rename_expr();
-	else if(is_next(Token::PROJECT))
-		project_expr();
-	if(!is_next(Token::RIGHTPAREN))
-		throw runtime_error("Parsing Error");
-	current_token++;
-	
+	Table t = expr();
+	t.print();
 	return;
 }
 

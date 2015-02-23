@@ -19,15 +19,15 @@ private:
 
 	void command();
 	//these will return tables
-	void query();
-	void expr();
-	void atomic_expr();
-	void select_expr();
-	void rename_expr();
-	void project_expr();
-	void union_expr();
-	void diff_expr();
-	void prod_expr();
+	Table query();
+	Table expr();
+	Table atomic_expr();
+	Table select_expr();
+	Table rename_expr();
+	Table project_expr();
+	Table union_expr(Table t1);
+	Table diff_expr(Table t1);
+	Table prod_expr(Table t1);
 
 	//these will return vector<int>
 	void condition();
