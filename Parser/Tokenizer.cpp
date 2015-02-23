@@ -6,6 +6,7 @@ Tokenizer::Tokenizer(string line){
 	position = storedLine.begin();
 }
 
+//
 void Tokenizer::tokenize_input(){
 	while(position != storedLine.end()){
 		

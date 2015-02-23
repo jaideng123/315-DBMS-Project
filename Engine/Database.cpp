@@ -251,6 +251,16 @@ Table Database::set_rename(Table t1, vector<string> attribute_names){
 	return new_table;
 }
 
+Table Database::get_table(string table_name){
+	if(table_exists(table_name)){
+		return	*find_table(table_name);
+	}
+	else{
+		cout<<"Error: Table not found\n";
+		return Table("NULL");
+	}
+}
+
 
 //*************************
 //private helper functions*

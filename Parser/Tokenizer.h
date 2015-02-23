@@ -10,11 +10,14 @@
 class Tokenizer{
 public:
 	Tokenizer(string line);
+
 	vector<Token> get_tokens(){
+		position = storedLine.begin();
 		tokens.clear();
 		tokenize_input();
 		return tokens;
 	}
+	
 private:
 	void tokenize_input();
 	void is_reserve_word();

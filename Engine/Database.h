@@ -55,6 +55,7 @@ public:
 	//rename all attributes
 	Table set_rename(Table t1, vector<string> attribute_names);
 
+	Table get_table(string table_name);
 
 private:
 	//Helper Functions

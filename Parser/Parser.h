@@ -2,20 +2,23 @@
 #define _parser_h_
 
 #include "Tokenizer.h"
+#include "../Engine/Database.h"
 #include <vector>
 
 class Parser{
 public:
-	Parser(){}
+	Parser(Database* database){db = database;}
 
 	void parse(string input);
 
 private:
+	Database* db;
 	vector<Token> tokens;
 	int current_token;
 	bool is_next(Token::Token_Type);
 
 	void command();
+	//these will return tables
 	void query();
 	void expr();
 	void atomic_expr();
@@ -26,9 +29,11 @@ private:
 	void diff_expr();
 	void prod_expr();
 
+	//these will return vector<int>
 	void condition();
 	void comparison();
 
+	//these will stay void
 	void open_cmd();
 	void close_cmd();
 	void write_cmd();
