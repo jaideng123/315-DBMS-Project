@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include <stdexcept>
+#include <algorithm>
 
 using namespace std;
 
@@ -101,12 +102,16 @@ Table Parser::select_expr(){
 	//select
 	current_token++;
 	//(condition)
-	condition();
+	int condition_loc = current_token;
 	vector<int> sel;
 	//expr
 	if(is_next(Token::IDENTIFIER)){
 		current_token++;
 		Table t = db->get_table(tokens[current_token].get_value());
+		int current_loc = current_token;
+		current_token = condition_loc;
+		condition(t);
+		current_token = current_loc;
 		return db->set_select(t,sel);
 	}
 	else if(is_next(Token::LEFTPAREN)){
@@ -265,34 +270,58 @@ Table Parser::prod_expr(Table t1){
 		throw runtime_error("Parsing Error");
 }
 //for condition parsing, it will start pointing
-//at the first left parentheses and should end
+//at just before the first left parentheses and should end
 //pointing at the last right parentheses
-void Parser::condition(){
+vector<int> Parser::condition(Table t){
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	vector<int> indices;
 	int paren_count = 1;
 	while(paren_count > 0){
 		if(is_next(Token::RIGHTPAREN)){
 			paren_count--;
 			current_token++;
+			break;
 		}
 		else if(is_next(Token::LEFTPAREN)){
 			paren_count++;
 			current_token++;
 		}
 		else if(is_next(Token::IDENTIFIER)){
-			comparison();
+			indices = comparison(t);
+		}
+		else if(is_next(Token::AND)){
+			current_token++;
+			if(is_next(Token::LEFTPAREN))
+				return and_indices(indices,condition(t));
+			else if(is_next(Token::IDENTIFIER))
+				return and_indices(indices,comparison(t));
+			else
+				throw runtime_error("Parsing Error");
+		}
+		else if(is_next(Token::OR)){
+			current_token++;
+			if(is_next(Token::LEFTPAREN))
+				return or_indices(indices,condition(t));
+			else if(is_next(Token::IDENTIFIER))
+				return or_indices(indices,comparison(t));
+			else
+				throw runtime_error("Parsing Error");
 		}
 		else
 			throw runtime_error("Parsing Error");
 	}
+	//return indices;
 }
 
 //for comparisons in condition
-void Parser::comparison(){
+vector<int> Parser::comparison(Table t){
+	vector<int> indices;
 	//operand 1
 	current_token++;
+	string id = tokens[current_token].get_value();
+	Token::Token_Type token;
 	//symbol
 	if(is_next(Token::EQ))
 		current_token++;
@@ -306,24 +335,124 @@ void Parser::comparison(){
 		current_token++;
 	else if(is_next(Token::NEQ))
 		current_token++;
-	else if(is_next(Token::LT))
-		current_token++;
 	else
 		throw runtime_error("Parsing Error");
+	token = tokens[current_token].get_type();
 	//operand 2
-	if(is_next(Token::NUMBER) || is_next(Token::INTEGER))
+	if(is_next(Token::NUMBER)){
 		current_token++;
+		indices = compare(t,id,token,tokens[current_token]);
+	}
 	else if(is_next(Token::LITERAL) &&(
 				tokens[current_token].get_type() == Token::EQ ||
-				tokens[current_token].get_type() == Token::NEQ))
+				tokens[current_token].get_type() == Token::NEQ)){
 		current_token++;
+		indices = compare(t,id,token,tokens[current_token]);
+	}
 	else
 		throw runtime_error("Parsing Error");
-	//check for conjunction
-	if(is_next(Token::AND))
+
+	if(is_next(Token::AND)){
 		current_token++;
-	else if(is_next(Token::OR))
+		if(is_next(Token::LEFTPAREN))
+			return and_indices(indices,condition(t));
+		else if(is_next(Token::IDENTIFIER))
+			return and_indices(indices,comparison(t));
+		else
+			throw runtime_error("Parsing Error");
+	}
+	else if(is_next(Token::OR)){
 		current_token++;
+		if(is_next(Token::LEFTPAREN))
+			return or_indices(indices,condition(t));
+		else if(is_next(Token::IDENTIFIER))
+			return or_indices(indices,comparison(t));
+		else
+			throw runtime_error("Parsing Error");
+	}
+	return indices;
+}
+
+vector<int> Parser::or_indices(vector<int> v1, vector<int> v2){
+	for (int i = 0; i < v2.size(); ++i)
+	{
+		if(find(v1.begin(),v1.end(),v2[i]) == v2.end())
+			v1.push_back(v2[i]);
+	}
+	return v1;
+}
+vector<int> Parser::and_indices(vector<int> v1, vector<int> v2){
+	vector<int> v;
+	for (int i = 0; i < v2.size(); ++i)
+	{
+		if(find(v1.begin(),v1.end(),v2[i]) != v2.end())
+			v.push_back(v2[i]);
+	}
+	return v;
+}
+vector<int> Parser::compare(Table t,string id,Token::Token_Type op,Token token){
+	int attr_index = -1;
+	for (int i = 0; i < t.get_attributes().size(); ++i){
+		if(t.get_attributes()[i].get_name() == id)
+			attr_index = i;
+	}
+	if(attr_index == -1)
+		throw runtime_error("Error: Attribute does not exist");
+	vector<int> indices;
+	vector<Record> rec = t.get_records();
+	if(token.get_type() == Token::NUMBER){
+		if(op == Token::EQ){
+			for (int i = 0; i < rec.size(); ++i){
+				if(stoi(rec[i].get_entry(attr_index)) == stoi(token.get_value()))
+					indices.push_back(i);
+			}
+		}
+		else if(op == Token::LT){
+			for (int i = 0; i < rec.size(); ++i){
+				if(stoi(rec[i].get_entry(attr_index)) < stoi(token.get_value()))
+					indices.push_back(i);
+			}
+		}
+		else if(op == Token::LEQ){
+			for (int i = 0; i < rec.size(); ++i){
+				if(stoi(rec[i].get_entry(attr_index)) <= stoi(token.get_value()))
+					indices.push_back(i);
+			}
+		}
+		else if(op == Token::GT){
+			for (int i = 0; i < rec.size(); ++i){
+				if(stoi(rec[i].get_entry(attr_index)) > stoi(token.get_value()))
+					indices.push_back(i);
+			}
+		}
+		else if(op == Token::GEQ){
+			for (int i = 0; i < rec.size(); ++i){
+				if(stoi(rec[i].get_entry(attr_index)) >= stoi(token.get_value()))
+					indices.push_back(i);
+			}
+		}
+		else if(op == Token::NEQ){
+			for (int i = 0; i < rec.size(); ++i){
+					if(stoi(rec[i].get_entry(attr_index)) != stoi(token.get_value()))
+						indices.push_back(i);
+			}
+		}
+	}
+	else if(token.get_type() == Token::LITERAL){
+		if(op == Token::EQ){
+			for (int i = 0; i < rec.size(); ++i){
+				if(rec[i].get_entry(attr_index) == token.get_value())
+					indices.push_back(i);
+			}
+		}
+		else if(op == Token::NEQ){
+			for (int i = 0; i < rec.size(); ++i){
+				if(rec[i].get_entry(attr_index) != token.get_value())
+					indices.push_back(i);
+			}
+		}
+	}
+	return indices;
 }
 
 void Parser::command(){
@@ -482,7 +611,8 @@ void Parser::update_cmd(){
 
 	if(is_next(Token::WHERE)){
 		current_token++;
-		condition();
+		Table t("NULL");
+		condition(t);
 	}
 	else
 		throw runtime_error("Parsing Error");
@@ -534,7 +664,8 @@ void Parser::delete_cmd(){
 	current_token++;
 	if(is_next(Token::WHERE)){
 		current_token++;
-		condition();
+		Table t("NULL");
+		condition(t);
 	}
 	else
 		throw runtime_error("Parsing Error");

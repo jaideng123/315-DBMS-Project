@@ -30,8 +30,12 @@ private:
 	Table prod_expr(Table t1);
 
 	//these will return vector<int>
-	void condition();
-	void comparison();
+	vector<int> condition(Table t);
+	vector<int> comparison(Table t);
+	//helper functions
+	vector<int> or_indices(vector<int> v1, vector<int> v2);
+	vector<int> and_indices(vector<int> v1, vector<int> v2);
+	vector<int> compare(Table t,string id,Token::Token_Type op,Token comp);
 
 	//these will stay void
 	void open_cmd();
