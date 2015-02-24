@@ -188,31 +188,37 @@ Table Database::set_difference(Table t1, Table t2){
 		if(!record_exists(t2,t1.get_records()[i]))
 			diff.add_record(t1.get_records()[i]);
 	}
+	diff.set_attributes(t1.get_attributes());
 	return diff;
 }
 
 //combine Attributes and Records
 Table Database::set_product(Table t1, Table t2){
 	Table prod(t1.get_name());
-	prod.set_attributes(t1.get_attributes());
-
+	
+	vector<Attribute> attributes;
+	for(int i = 0; i< t1.get_attributes().size(); i++){
+		Attribute attr(t1.get_attribute(i).get_name()+"_1",t1.get_attribute(i).get_type());
+		prod.add_attribute(attr);
+	}
 	for(int i = 0; i< t2.get_attributes().size(); i++){
-		for(int j = 0; j < t1.get_attributes().size(); j++){
-			if(t2.get_attribute(i)==t1.get_attribute(j))
-				break;
-			if(j == t1.get_attributes().size()-1)
-				prod.add_attribute(t2.get_attribute(i));
+		Attribute attr(t2.get_attribute(i).get_name()+"_2",t2.get_attribute(i).get_type());
+		prod.add_attribute(attr);
+	}
+	
+	for(int i = 0; i< t1.get_records().size(); i++){
+		for(int j = 0; j < t2.get_records().size(); j++){
+			vector<string> values_1 = t1.get_record(j).get_values();
+			vector<string> values_2 = t2.get_record(i).get_values();
+			for(int i=0; i<values_2.size(); i++)
+			{
+				values_1.push_back(values_2[i]);
+			}
+			Record new_rec(values_1);
+			prod.add_record(new_rec);
 		}
 	}
-	prod.set_records(t1.get_records());
-	for(int i = 0; i< t2.get_records().size(); i++){
-		for(int j = 0; j < t1.get_records().size(); j++){
-			if(t2.get_record(i)==t1.get_record(j))
-				break;
-			if(j == t1.get_records().size()-1)
-				prod.add_record(t2.get_record(i));
-		}
-	}
+	return prod;
 }
 
 //select only certain attributes
