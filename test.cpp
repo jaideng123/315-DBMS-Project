@@ -33,5 +33,20 @@ int main(){
 	string q = "testing <- SELECT (id < 5 && (name == \"Eric\" || name != \"Tristan\")) test;";
 	db.execute(q);
 	db.db.show("testing");
+	
+	q = "testing <- test + testing;";
+	db.execute(q);
+	db.db.show("testing");
+	
+	q = "testing <- RENAME (new_id,new_name,new_descr,new_user_id) testing;";
+	db.execute(q);
+	db.db.show("testing");
+	
+	q = "testing <- PROJECT (new_id,new_name) testing;";
+	db.execute(q);
+	db.db.show("testing");
+	
+	
+	
 	return 0;
 }

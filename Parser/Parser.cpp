@@ -12,7 +12,10 @@ void Parser::parse(string input){
 		string name = tokens[current_token].get_value();
 		Table t = query();
 		t.set_name(name);
-		db->tables.push_back(t);
+		if(!db->table_exists(name))
+			db->tables.push_back(t);
+		else
+			*db->find_table(name) = t;
 	}
 	else{
 		command();
@@ -131,6 +134,8 @@ Table Parser::select_expr(){
 	else
 		throw runtime_error("Parsing Error");
 }
+
+//helper function to skip condition
 void Parser::eat_condition(){
 	current_token++;
 	int paren_count = 1;

@@ -15,6 +15,7 @@
 using namespace std;
 
 class Database{
+friend class Parser;
 public:
 	//constructors
 	Database(){}
