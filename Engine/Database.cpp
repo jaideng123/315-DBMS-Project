@@ -256,7 +256,7 @@ Table Database::get_table(string table_name){
 		return	*find_table(table_name);
 	}
 	else{
-		cout<<"Error: Table not found\n";
+		cout<<"Error: Table not found: "<<table_name<<"\n";
 		return Table("NULL");
 	}
 }

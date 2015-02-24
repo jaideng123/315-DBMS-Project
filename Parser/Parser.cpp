@@ -9,8 +9,9 @@ void Parser::parse(string input){
 	tokens = t.get_tokens();
 	current_token = 0;
 	if(tokens[current_token].get_type() == Token::IDENTIFIER){
+		string name = tokens[current_token].get_value();
 		Table t = query();
-		t.set_name(tokens[current_token].get_value());
+		t.set_name(name);
 		db->tables.push_back(t);
 	}
 	else{
@@ -103,6 +104,7 @@ Table Parser::select_expr(){
 	current_token++;
 	//(condition)
 	int condition_loc = current_token;
+	eat_condition();
 	vector<int> sel;
 	//expr
 	if(is_next(Token::IDENTIFIER)){
@@ -110,7 +112,7 @@ Table Parser::select_expr(){
 		Table t = db->get_table(tokens[current_token].get_value());
 		int current_loc = current_token;
 		current_token = condition_loc;
-		condition(t);
+		sel = condition(t);
 		current_token = current_loc;
 		return db->set_select(t,sel);
 	}
@@ -120,10 +122,32 @@ Table Parser::select_expr(){
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		int current_loc = current_token;
+		current_token = condition_loc;
+		sel = condition(t);
+		current_token = current_loc;
 		return db->set_select(t,sel);
 	}
 	else
 		throw runtime_error("Parsing Error");
+}
+void Parser::eat_condition(){
+	current_token++;
+	int paren_count = 1;
+	while(paren_count > 0){
+		if(is_next(Token::RIGHTPAREN)){
+			paren_count--;
+			current_token++;
+		}
+		else if(is_next(Token::LEFTPAREN)){
+			paren_count++;
+			current_token++;
+		}
+		else 
+			current_token++;
+	}
+	return;
+
 }
 
 //for rename expressions
@@ -312,7 +336,7 @@ vector<int> Parser::condition(Table t){
 		else
 			throw runtime_error("Parsing Error");
 	}
-	//return indices;
+	return indices;
 }
 
 //for comparisons in condition
@@ -351,13 +375,17 @@ vector<int> Parser::comparison(Table t){
 	}
 	else
 		throw runtime_error("Parsing Error");
-
+	vector<int> new_indices;
 	if(is_next(Token::AND)){
 		current_token++;
-		if(is_next(Token::LEFTPAREN))
-			return and_indices(indices,condition(t));
-		else if(is_next(Token::IDENTIFIER))
-			return and_indices(indices,comparison(t));
+		if(is_next(Token::LEFTPAREN)){
+			new_indices = condition(t);
+			return and_indices(indices,new_indices);
+		}
+		else if(is_next(Token::IDENTIFIER)){
+			new_indices = comparison(t);
+			return and_indices(indices,new_indices);
+		}
 		else
 			throw runtime_error("Parsing Error");
 	}
@@ -376,7 +404,7 @@ vector<int> Parser::comparison(Table t){
 vector<int> Parser::or_indices(vector<int> v1, vector<int> v2){
 	for (int i = 0; i < v2.size(); ++i)
 	{
-		if(find(v1.begin(),v1.end(),v2[i]) == v2.end())
+		if(find(v1.begin(),v1.end(),v2[i]) == v1.end())
 			v1.push_back(v2[i]);
 	}
 	return v1;
@@ -385,7 +413,7 @@ vector<int> Parser::and_indices(vector<int> v1, vector<int> v2){
 	vector<int> v;
 	for (int i = 0; i < v2.size(); ++i)
 	{
-		if(find(v1.begin(),v1.end(),v2[i]) != v2.end())
+		if(find(v1.begin(),v1.end(),v2[i]) != v1.end())
 			v.push_back(v2[i]);
 	}
 	return v;

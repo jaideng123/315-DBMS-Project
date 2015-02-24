@@ -36,6 +36,7 @@ private:
 	vector<int> or_indices(vector<int> v1, vector<int> v2);
 	vector<int> and_indices(vector<int> v1, vector<int> v2);
 	vector<int> compare(Table t,string id,Token::Token_Type op,Token comp);
+	void eat_condition();
 
 	//these will stay void
 	void open_cmd();

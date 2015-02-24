@@ -10,9 +10,8 @@ public:
 	DBMS(){}
 	int execute(string ex);
 	Table get_table(string table_name);
-
+	Database db;//move this to private before we finish
 private:
-	Database db;
 
 };
 
