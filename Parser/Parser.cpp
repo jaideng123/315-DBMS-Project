@@ -555,7 +555,6 @@ void Parser::exit_cmd(){
 }
 
 void Parser::show_cmd(){
-	current_token++;
 	Table t = expr();
 	t.print();
 	return;
