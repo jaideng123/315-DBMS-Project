@@ -298,6 +298,7 @@ Table Parser::prod_expr(Table t1){
 	else
 		throw runtime_error("Parsing Error");
 }
+
 //for condition parsing, it will start pointing
 //at just before the first left parentheses and should end
 //pointing at the last right parentheses
@@ -320,6 +321,7 @@ vector<int> Parser::condition(Table t){
 		else if(is_next(Token::IDENTIFIER)){
 			indices = comparison(t);
 		}
+		//check for conjunctions
 		else if(is_next(Token::AND)){
 			current_token++;
 			if(is_next(Token::LEFTPAREN))
@@ -380,17 +382,13 @@ vector<int> Parser::comparison(Table t){
 	}
 	else
 		throw runtime_error("Parsing Error");
-	vector<int> new_indices;
+	//check for conjunctions
 	if(is_next(Token::AND)){
 		current_token++;
-		if(is_next(Token::LEFTPAREN)){
-			new_indices = condition(t);
-			return and_indices(indices,new_indices);
-		}
-		else if(is_next(Token::IDENTIFIER)){
-			new_indices = comparison(t);
-			return and_indices(indices,new_indices);
-		}
+		if(is_next(Token::LEFTPAREN))
+			return and_indices(indices,condition(t));
+		else if(is_next(Token::IDENTIFIER))
+			return and_indices(indices,comparison(t));
 		else
 			throw runtime_error("Parsing Error");
 	}
@@ -406,6 +404,7 @@ vector<int> Parser::comparison(Table t){
 	return indices;
 }
 
+//v1 || v2
 vector<int> Parser::or_indices(vector<int> v1, vector<int> v2){
 	for (int i = 0; i < v2.size(); ++i)
 	{
@@ -414,6 +413,8 @@ vector<int> Parser::or_indices(vector<int> v1, vector<int> v2){
 	}
 	return v1;
 }
+
+//v1 && v2
 vector<int> Parser::and_indices(vector<int> v1, vector<int> v2){
 	vector<int> v;
 	for (int i = 0; i < v2.size(); ++i)
@@ -423,7 +424,10 @@ vector<int> Parser::and_indices(vector<int> v1, vector<int> v2){
 	}
 	return v;
 }
+
+//get indices of records matching comparison
 vector<int> Parser::compare(Table t,string id,Token::Token_Type op,Token token){
+	//find index of field to compare
 	int attr_index = -1;
 	for (int i = 0; i < t.get_attributes().size(); ++i){
 		if(t.get_attributes()[i].get_name() == id)
@@ -431,6 +435,7 @@ vector<int> Parser::compare(Table t,string id,Token::Token_Type op,Token token){
 	}
 	if(attr_index == -1)
 		throw runtime_error("Error: Attribute does not exist");
+	//get indices of corresponding records
 	vector<int> indices;
 	vector<Record> rec = t.get_records();
 	if(token.get_type() == Token::NUMBER){

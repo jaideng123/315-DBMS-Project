@@ -34,6 +34,10 @@ int main(){
 	db.execute(q);
 	db.db.show("testing");
 	
+	q = "testing <- test - testing;";
+	db.execute(q);
+	db.db.show("testing");
+	
 	q = "testing <- test + testing;";
 	db.execute(q);
 	db.db.show("testing");
