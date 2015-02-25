@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main(){
+ int main(){
 	DBMS db;
 	vector<Attribute> attr;
 
@@ -57,4 +57,4 @@ int main(){
 	
 	
 	return 0;
-}
+} 
