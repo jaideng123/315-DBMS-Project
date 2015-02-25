@@ -53,7 +53,6 @@ using namespace std;
 	q = "testing <- test * testing;";
 	db.execute(q);
 	db.db.show("testing");
-	db.execute("garbage");
 	
 	
 	return 0;
