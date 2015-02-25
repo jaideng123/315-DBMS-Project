@@ -17,7 +17,7 @@ void Tokenizer::tokenize_input(){
 		//check if alpaha
 		else if(isalpha(*position)) {
 			//Check if reserve word
-			if(isupper(*position)) {
+			if(isupper(*(position+1))) {
 				is_reserve_word();
 			}
 			else{
