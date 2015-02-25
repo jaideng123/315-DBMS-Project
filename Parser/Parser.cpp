@@ -8,6 +8,8 @@ void Parser::parse(string input){
 	Tokenizer t(input);
 	tokens = t.get_tokens();
 	current_token = 0;
+	if(tokens.size() == 0)
+		return;
 	if(tokens[current_token].get_type() == Token::IDENTIFIER){
 		string name = tokens[current_token].get_value();
 		Table t = query();
