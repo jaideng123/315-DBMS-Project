@@ -46,12 +46,18 @@ private:
 	int find_size(string t){
 		string num = "";
 		int index = t.size()-2;
+		if(t[index+1] != ')')
+			throw runtime_error("Error: VARCHAR requires valid size");
 		char temp = t[index];
 		while (temp != '('){
+			if(!isdigit(temp))
+				throw runtime_error("Error: VARCHAR requires valid size");
 			num = temp + num;
 			index--;
 			temp = t[index];
 		}
+		if(num == "")
+			throw runtime_error("Error: VARCHAR requires valid size");
 		return stoi(num);
 	}
 	int size_lim;

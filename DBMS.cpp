@@ -12,7 +12,7 @@ int DBMS::execute(string ex){
 		return 0;
 	}
 	catch(...){
-		cout<<"Parsing error"<<endl;
+		cout<<"Invalid Command"<<endl;
 		return 1;
 	}
 	#endif
