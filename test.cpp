@@ -7,10 +7,10 @@ using namespace std;
 	DBMS db;
 	vector<Attribute> attr;
 
- 	attr.push_back(Attribute("id","integer"));
-	attr.push_back(Attribute("name","string"));
-	attr.push_back(Attribute("description","text"));
-	attr.push_back(Attribute("user_id","integer"));
+ 	attr.push_back(Attribute("id","INTEGER"));
+	attr.push_back(Attribute("name","VARCHAR(20)"));
+	attr.push_back(Attribute("description","STRING"));
+	attr.push_back(Attribute("user_id","INTEGER"));
 
 	Table test("test",attr);
 

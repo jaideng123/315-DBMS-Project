@@ -6,7 +6,7 @@ Tokenizer::Tokenizer(string line){
 	position = storedLine.begin();
 }
 
-//
+//process string into tokens
 void Tokenizer::tokenize_input(){
 	while(position != storedLine.end()){
 		
@@ -17,7 +17,7 @@ void Tokenizer::tokenize_input(){
 		//check if alpaha
 		else if(isalpha(*position)) {
 			//Check if reserve word
-			if(isupper(*(position+1))) {
+			if(isupper(*(position)) && isupper(*(position+1))) {
 				is_reserve_word();
 			}
 			else{
@@ -37,7 +37,7 @@ void Tokenizer::tokenize_input(){
 			is_number();
 		}
 		else
-			throw runtime_error("Tokenizing error");
+			throw runtime_error("Tokenizing error:Symbol not recognized");
 		
 	}
 }

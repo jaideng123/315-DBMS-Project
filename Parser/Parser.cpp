@@ -107,7 +107,7 @@ Table Parser::atomic_expr(){
 Table Parser::select_expr(){
 	//select
 	current_token++;
-	//(condition)
+	//skip condition for now
 	int condition_loc = current_token;
 	eat_condition();
 	vector<int> sel;
@@ -115,6 +115,7 @@ Table Parser::select_expr(){
 	if(is_next(Token::IDENTIFIER)){
 		current_token++;
 		Table t = db->get_table(tokens[current_token].get_value());
+		//go back and process condition
 		int current_loc = current_token;
 		current_token = condition_loc;
 		sel = condition(t);
@@ -127,6 +128,7 @@ Table Parser::select_expr(){
 		if(!is_next(Token::RIGHTPAREN))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		//go back and process condition
 		int current_loc = current_token;
 		current_token = condition_loc;
 		sel = condition(t);
@@ -382,6 +384,10 @@ vector<int> Parser::comparison(Table t){
 		current_token++;
 		indices = compare(t,id,token,tokens[current_token]);
 	}
+	/*else if(is_next(Token::IDENTIFIER)){
+		current_token++;
+		indices = compare(t,id,token,tokens[current_token]);
+	}*/
 	else
 		throw runtime_error("Parsing Error");
 	//check for conjunctions

@@ -45,10 +45,23 @@ public:
 	//prints table to screen
 	void print();
 
+	//checks if record is valid
+	bool is_valid(Record r);
+
 	//overloading the assignment operator for table class
 	Table& operator=(const Table&);
 
+
 private:
+	inline bool is_integer(const std::string & s){
+	   	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) 
+	   		return false ;
+
+		char * p ;
+		strtol(s.c_str(), &p, 10) ;
+
+   		return (*p == 0) ;
+	}
 	string name;
 	vector<Attribute> attributes;
 	vector<Record> records;

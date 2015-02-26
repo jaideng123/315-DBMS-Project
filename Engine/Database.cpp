@@ -90,7 +90,11 @@ void Database::create(string table_name, vector<Attribute> v){
 //insert a record into a table in tables
 void Database::insert(string table_name, Record record){
 	if(table_exists(table_name)){
-		find_table(table_name)->add_record(record);
+		Table* t = find_table(table_name);
+		if(t->is_valid(record))
+			t->add_record(record);
+		else
+			cout<<"Record is not compatible with table";
 	}
 	else
 		cout<<"Error: Table not found\n";

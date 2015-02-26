@@ -65,6 +65,24 @@ void Table::print(){
 		cout<<endl;
 	}
 }
+bool Table::is_valid(Record r){
+	if(r.get_size() != attributes.size())
+		return false;
+	for (int i = 0; i < attributes.size(); ++i){
+		if(attributes[i].get_type() == "INTEGER"){
+			if (!is_integer(r.get_entry(i)))
+				return false;
+		}
+		else if(attributes[i].get_type().substr(0,7) == "VARCHAR"){
+			if (r.get_entry(i).size() > attributes[i].get_size())
+				return false;
+		}
+		else if(!(attributes[i].get_type() == "STRING")){
+			return false;
+		}
+	}
+	return true;
+}
 
 //overloading the assignment operator for the table class
 Table& Table::operator=(const Table& rhs){

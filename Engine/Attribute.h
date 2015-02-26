@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <climits>
+#include <stdexcept>
 
 using namespace std;
 
@@ -13,13 +15,27 @@ public:
 	
 	Attribute(string i_name, string i_type){
 		name = i_name;
-		type = i_type;
+		if(i_type.substr(0,7) == "VARCHAR"){
+			type = i_type;
+			size_lim = find_size(i_type);
+		}
+		else if(i_type == "INTEGER"){
+			type = i_type;
+			size_lim = INT_MAX;
+		}
+		else if(i_type == "STRING"){
+			type = i_type;
+			size_lim = INT_MAX;
+		}
+		else
+			throw runtime_error("Error: Type is not supported");
 	}
 
 	//set and get functions
 	
 	string get_name() const {return name;}
 	string get_type() const {return type;}
+	int get_size() const {return size_lim;}
 	Attribute& operator=(const Attribute& rhs){
 		name = rhs.name;
 		type = rhs.type;
@@ -27,6 +43,18 @@ public:
 	}
 	
 private:
+	int find_size(string t){
+		string num = "";
+		int index = t.size()-2;
+		char temp = t[index];
+		while (temp != '('){
+			num = temp + num;
+			index--;
+			temp = t[index];
+		}
+		return stoi(num);
+	}
+	int size_lim;
 	string type;
 	string name;
 };
