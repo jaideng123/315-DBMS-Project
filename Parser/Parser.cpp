@@ -557,29 +557,35 @@ void Parser::command(){
 }
 
 void Parser::open_cmd(){
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		db->open(tokens[current_token].get_value());
+	}
 	else
 		throw runtime_error("Parsing Error");
 }
 
 void Parser::close_cmd(){
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		db->close(tokens[current_token].get_value());
+	}
 	else
 		throw runtime_error("Parsing Error");
 }
 
 void Parser::write_cmd(){
-	if(is_next(Token::IDENTIFIER))
+	if(is_next(Token::IDENTIFIER)){
 		current_token++;
+		db->close(tokens[current_token].get_value());
+	}
 	else
 		throw runtime_error("Parsing Error");
 }
 
 void Parser::exit_cmd(){
 	if(is_next(Token::SEMICOLON))
-		return;
+		db->exit();
 	throw runtime_error("Parsing Error");
 }
 
@@ -597,6 +603,7 @@ void Parser::create_cmd(){
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	string id = token.get_value();
 	//------------------------------(
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");

@@ -40,6 +40,8 @@ public:
 	void update(string table_name,vector<Record> new_records,vector<int> old_records);
 	//delete records based on index
 	void delete_records(string table_name,vector<int> to_remove);
+	//exit (flush all tables)
+	void exit(){tables.clear();}
 
 	//Query functions
 
