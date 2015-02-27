@@ -38,6 +38,7 @@ private:
 	int find_index(vector<Attribute> attrs, string id);
 	vector<int> compare(Table t,string id,Token::Token_Type op,Token comp);
 	void eat_condition();
+	vector<string> grab_list();
 
 	//these will stay void
 	void open_cmd();

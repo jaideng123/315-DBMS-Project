@@ -152,17 +152,8 @@ void Parser::eat_condition(){
 			current_token++;
 	}
 	return;
-
 }
-
-//for rename expressions
-Table Parser::rename_expr(){
-	//rename
-	current_token++;
-	//(attr_list)
-	if(!is_next(Token::LEFTPAREN))
-		throw runtime_error("Parsing Error");
-	current_token++;
+vector<string> Parser::grab_list(){
 	vector<string> new_attr;
 	while(!is_next(Token::RIGHTPAREN)){
 		if(!is_next(Token::IDENTIFIER))
@@ -173,6 +164,18 @@ Table Parser::rename_expr(){
 			break;
 		current_token++;
 	}
+	return new_attr;
+}
+
+//for rename expressions
+Table Parser::rename_expr(){
+	//rename
+	current_token++;
+	//(attr_list)
+	if(!is_next(Token::LEFTPAREN))
+		throw runtime_error("Parsing Error");
+	current_token++;
+	vector<string> new_attr = grab_list();
 	if(!is_next(Token::RIGHTPAREN))
 		throw runtime_error("Parsing Error");
 	current_token++;
