@@ -60,7 +60,8 @@ void Tokenizer::is_reserve_word(){
 	string word;
 	//Get complete word - Checks for whitespace and parentheses
 	while ( (current != storedLine.end()) && (!(isspace(*current))) && 
-			(*current != '(') && (*current != ')') && (*current != ';')) {
+			(*current != '(') && (*current != ')') && (*current != ';')&&
+			(*current != ',')) {
 		word += *current;
 		++current;
 	}

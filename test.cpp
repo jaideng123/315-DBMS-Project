@@ -5,32 +5,19 @@ using namespace std;
 
  int main(){
 	DBMS db;
-	vector<Attribute> attr;
-
- 	attr.push_back(Attribute("id","INTEGER"));
-	attr.push_back(Attribute("name","VARCHAR(20)"));
-	attr.push_back(Attribute("description","STRING"));
-	attr.push_back(Attribute("user_id","INTEGER"));
-
-	Table test("test",attr);
+	db.execute("CREATE TABLE test (id INTEGER,name VARCHAR(20),description VARCHAR(50),user_id INTEGER) PRIMARY KEY (name);");
 
 	for (int i = 0; i < 20; ++i){
 		Record r;
-
 		//c++ 11 features
 		string pid = to_string(i);
 		string uid = to_string(i*20);
-
-		r.add_entry(pid);
-		r.add_entry("Dummy String");
-		r.add_entry("Dummy Text");
-		r.add_entry(uid);
-
-		test.add_record(r);
+		string q = "INSERT INTO test VALUES FROM ("+ pid+",\"Dummy String\",\"Dummy Text\","+uid+");";
+		db.execute(q);
 	}
-	db.db.tables.push_back(test);
+	db.execute("SHOW test;");
 
-	string q = "testing <- SELECT (id < 5 && (name == \"Eric\" || name != \"Tristan\")) test;";
+/* 	string q = "testing <- SELECT (id < 5 && (name == \"Eric\" || name != \"Tristan\")) test;";
 	db.execute(q);
 	db.db.show("testing");
 	
@@ -53,7 +40,7 @@ using namespace std;
 	q = "testing <- SELECT (id == new_id) (test * testing);";
 	db.execute(q);
 	db.db.show("testing");
-	
+	 */
 	
 	return 0;
 } 

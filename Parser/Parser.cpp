@@ -156,7 +156,7 @@ void Parser::eat_condition(){
 vector<string> Parser::grab_list(){
 	vector<string> new_attr;
 	while(!is_next(Token::RIGHTPAREN)){
-		if(!is_next(Token::IDENTIFIER))
+		if(!is_next(Token::IDENTIFIER) && !is_next(Token::NUMBER) && !is_next(Token::LITERAL))
 			throw runtime_error("Parsing Error");
 		current_token++;
 		new_attr.push_back(tokens[current_token].get_value());
@@ -633,6 +633,7 @@ void Parser::create_cmd(){
 		else if(is_next(Token::INTEGER)){
 			current_token++;
 			type = "INTEGER";
+			attrs.push_back(Attribute(name,type));
 		}
 		else
 			throw runtime_error("Parsing Error");
@@ -744,6 +745,7 @@ void Parser::insert_cmd(){
 	}
 	else if(is_next(Token::LEFTPAREN))
 	{
+		current_token++;
 		Record new_rec(grab_list());
 		db->insert(table_name,new_rec);
 	}
