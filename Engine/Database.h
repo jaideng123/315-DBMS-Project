@@ -17,8 +17,8 @@ using namespace std;
 class Database{
 friend class Parser;
 public:
-	//constructors
-	Database(){}
+	//constructor
+	Database(){system("mkdir Databases");}
 
 	vector<Table> tables;
 

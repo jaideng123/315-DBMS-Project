@@ -16,8 +16,12 @@ using namespace std;
 		db.execute(q);
 	}
 	db.execute("SHOW test;");
-
-/* 	string q = "testing <- SELECT (id < 5 && (name == \"Eric\" || name != \"Tristan\")) test;";
+	db.execute("WRITE test;");
+	db.execute("CLOSE test;");
+	db.execute("OPEN test;");
+	db.execute("SHOW test;");
+/* 
+ 	string q = "testing <- SELECT (id < 5 && (name == \"Eric\" || name != \"Tristan\")) test;";
 	db.execute(q);
 	db.db.show("testing");
 	
@@ -41,6 +45,5 @@ using namespace std;
 	db.execute(q);
 	db.db.show("testing");
 	 */
-	
 	return 0;
 } 

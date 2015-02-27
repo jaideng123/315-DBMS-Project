@@ -577,7 +577,7 @@ void Parser::close_cmd(){
 void Parser::write_cmd(){
 	if(is_next(Token::IDENTIFIER)){
 		current_token++;
-		db->close(tokens[current_token].get_value());
+		db->write(tokens[current_token].get_value());
 	}
 	else
 		throw runtime_error("Parsing Error");

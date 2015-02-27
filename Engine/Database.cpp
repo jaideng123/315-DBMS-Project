@@ -54,6 +54,9 @@ void Database::write(string table_name){
 	string file_name = FILEPATH + table_name + ".db";
 	ofstream my_file;
   	my_file.open(file_name.c_str());
+	if(!my_file) {
+		cout<<"Error: unable to open file!\n";
+	}
 
   	//write attributes
   	vector<Attribute> attr = table.get_attributes();
