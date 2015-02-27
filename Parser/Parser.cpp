@@ -452,7 +452,8 @@ vector<int> Parser::compare(Table t,string id,Token::Token_Type op,Token token){
 	//get indices of corresponding records
 	bool is_num = (token.get_type() == Token::NUMBER ||
 		(token.get_type() == Token::IDENTIFIER && 
-		t.get_attributes()[attr_index_2].get_type() == "INTEGER"));
+		t.get_attributes()[attr_index_2].get_type() == "INTEGER" &&
+		t.get_attributes()[attr_index].get_type() == "INTEGER"));
 	vector<int> indices;
 	vector<Record> rec = t.get_records();
 	string op1 = "";
