@@ -763,10 +763,11 @@ void Parser::delete_cmd(){
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	string table_name = tokens[current_token].get_value();
 	if(is_next(Token::WHERE)){
 		current_token++;
-		Table t("NULL");
-		condition(t);
+		Table t = db->get_table(table_name);
+		db->delete_records(table_name,condition(t));
 	}
 	else
 		throw runtime_error("Parsing Error");
