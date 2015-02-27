@@ -717,9 +717,6 @@ void Parser::update_cmd(){
 	}
 	else
 		throw runtime_error("Parsing Error");
-	
-	
-
 }
 
 void Parser::insert_cmd(){
@@ -729,6 +726,7 @@ void Parser::insert_cmd(){
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	string table_name = tokens[current_token].get_value();
 	if(!is_next(Token::VALUES))
 		throw runtime_error("Parsing Error");
 	current_token++;
@@ -737,20 +735,17 @@ void Parser::insert_cmd(){
 	current_token++;
 	if(is_next(Token::RELATION)){
 		current_token++;
-		expr();
+		Table t = expr();
+		vector<Record> new_rec = t.get_records();
+		if(new_rec[0].get_size() != db->get_table(table_name).get_records()[0].get_size())
+			throw runtime_error("Error: sizes of records do not match");
+		for(int i = 0; i < new_rec.size(); ++i)
+			db->insert(table_name,new_rec[i]);
 	}
 	else if(is_next(Token::LEFTPAREN))
 	{
-		current_token++;
-		while(!is_next(Token::RIGHTPAREN)){
-			if(!is_next(Token::LITERAL))
-				throw runtime_error("Parsing Error");
-			current_token++;
-			if(!is_next(Token::COMMA))
-				break;
-			current_token++;
-		}
-		current_token++;
+		Record new_rec(grab_list());
+		db->insert(table_name,new_rec);
 	}
 	else
 		throw runtime_error("Parsing Error");
