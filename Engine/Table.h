@@ -54,19 +54,15 @@ public:
 
 private:
 	inline bool is_integer(const std::string & s){
-	   	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) 
+	   	if(s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
 	   		return false ;
-
 		char * p ;
 		strtol(s.c_str(), &p, 10) ;
-
-   		return (*p == 0) ;
+		return (*p == 0) ;
 	}
 	string name;
 	vector<Attribute> attributes;
 	vector<Record> records;
-
-
 };
 
 //overloading equals-equals operator for table class

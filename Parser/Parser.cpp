@@ -351,36 +351,21 @@ vector<int> Parser::comparison(Table t){
 	vector<int> indices;
 	//operand 1
 	current_token++;
-	string id = tokens[current_token].get_value();
+	string id;
 	Token::Token_Type token;
-	//symbol
-	if(is_next(Token::EQ))
+	//check symbol
+	if(is_next(Token::EQ) || is_next(Token::LT) || 
+			is_next(Token::LEQ) || is_next(Token::GT) ||
+			is_next(Token::GEQ) || is_next(Token::NEQ)){
+		id = tokens[current_token].get_value();
 		current_token++;
-	else if(is_next(Token::LT))
-		current_token++;
-	else if(is_next(Token::LEQ))
-		current_token++;
-	else if(is_next(Token::GT))
-		current_token++;
-	else if(is_next(Token::GEQ))
-		current_token++;
-	else if(is_next(Token::NEQ))
-		current_token++;
+	}
 	else
 		throw runtime_error("Parsing Error");
 	token = tokens[current_token].get_type();
-	//operand 2
-	if(is_next(Token::NUMBER)){
-		current_token++;
-		indices = compare(t,id,token,tokens[current_token]);
-	}
-	else if(is_next(Token::LITERAL) &&(
-				tokens[current_token].get_type() == Token::EQ ||
-				tokens[current_token].get_type() == Token::NEQ)){
-		current_token++;
-		indices = compare(t,id,token,tokens[current_token]);
-	}
-	else if(is_next(Token::IDENTIFIER)){
+	//check operand 2
+	if(is_next(Token::NUMBER) || is_next(Token::IDENTIFIER) ||
+			is_next(Token::LITERAL)){
 		current_token++;
 		indices = compare(t,id,token,tokens[current_token]);
 	}
@@ -428,32 +413,30 @@ vector<int> Parser::and_indices(vector<int> v1, vector<int> v2){
 	}
 	return v;
 }
+//pick out index that contains id
+int Parser::find_index(vector<Attribute> attrs, string id){
+	int index = -1;
+	for (int i = 0; i < attrs.size(); ++i){
+		if(attrs[i].get_name() == id)
+			index = i;
+	}
+	return index;
+}
 
 //get indices of records matching comparison
 vector<int> Parser::compare(Table t,string id,Token::Token_Type op,Token token){
 	//find index of field to compare
-	int attr_index = -1;
-	int attr_index_2 = -1;
-	for (int i = 0; i < t.get_attributes().size(); ++i){
-		if(t.get_attributes()[i].get_name() == id)
-			attr_index = i;
-	}
+	int attr_index = find_index(t.get_attributes(),id);
+	int attr_index_2 = find_index(t.get_attributes(),token.get_value());
 	if(attr_index == -1)
 		throw runtime_error("Error: Attribute does not exist");
-	//grab attribute index 2 if needed
-	if(token.get_type() == Token::IDENTIFIER){
-		for (int i = 0; i < t.get_attributes().size(); ++i){
-			if(t.get_attributes()[i].get_name() == token.get_value())
-				attr_index_2 = i;
-		}
-		if(attr_index_2 == -1)
-			throw runtime_error("Error: Attribute does not exist");
-	}
-	//get indices of corresponding records
+	if(token.get_type() == Token::IDENTIFIER && attr_index_2 == -1)
+		throw runtime_error("Error: Attribute does not exist");
 	bool is_num = (token.get_type() == Token::NUMBER ||
 		(token.get_type() == Token::IDENTIFIER && 
 		t.get_attributes()[attr_index_2].get_type() == "INTEGER" &&
 		t.get_attributes()[attr_index].get_type() == "INTEGER"));
+	//get indices of corresponding records
 	vector<int> indices;
 	vector<Record> rec = t.get_records();
 	string op1 = "";
@@ -568,7 +551,6 @@ void Parser::command(){
 	}
 	else
 		throw runtime_error("Parsing Error");
-	return;
 }
 
 void Parser::open_cmd(){
