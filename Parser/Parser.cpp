@@ -603,30 +603,36 @@ void Parser::create_cmd(){
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
 	current_token++;
-	string id = token.get_value();
-	//------------------------------(
+	string id = tokens[current_token].get_value();
+	//attribue list
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	vector<Attribute> attrs;
 	while(!is_next(Token::RIGHTPAREN)){
 		if(!is_next(Token::IDENTIFIER))
 			throw runtime_error("Parsing Error");
 		current_token++;
-
+		string name = tokens[current_token].get_value();
+		string type = "";
 		if(is_next(Token::VARCHAR)){
 			current_token++;
+			type = "VARCHAR(";
 			if(!is_next(Token::LEFTPAREN))
 				throw runtime_error("Parsing Error");
 			current_token++;
 			if(!is_next(Token::NUMBER))
 				throw runtime_error("Parsing Error");
 			current_token++;
+			type += tokens[current_token].get_value() + ")";
 			if(!is_next(Token::RIGHTPAREN))
 				throw runtime_error("Parsing Error");
 			current_token++;
+			attrs.push_back(Attribute(name,type));
 		}
 		else if(is_next(Token::INTEGER)){
 			current_token++;
+			type = "INTEGER";
 		}
 		else
 			throw runtime_error("Parsing Error");
@@ -636,7 +642,6 @@ void Parser::create_cmd(){
 		current_token++;
 	}
 	current_token++;
-	//-------------------------------)
 	if(!is_next(Token::PRIMARY))
 		throw runtime_error("Parsing Error");
 	current_token++;
@@ -657,26 +662,31 @@ void Parser::create_cmd(){
 	}
 	//-------------------------------)	
 	current_token++;
+	db->create(id,attrs);
 }
 
 void Parser::update_cmd(){
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	string table_name = tokens[current_token].get_value();
 	if(!is_next(Token::SET))
 		throw runtime_error("Parsing Error");
 	current_token++;
-
+	vector<string> attrs;
+	vector<string> new_values;
 	while(!is_next(Token::WHERE)){
 		if(!is_next(Token::IDENTIFIER))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		attrs.push_back(tokens[current_token].get_value());
 		if(!is_next(Token::EQUALSIGN))
 			throw runtime_error("Parsing Error");
 		current_token++;
 		if(!is_next(Token::LITERAL))
 			throw runtime_error("Parsing Error");
 		current_token++;
+		new_values.push_back(tokens[current_token].get_value());
 		if(!is_next(Token::COMMA))
 			break;
 		current_token++;
@@ -684,8 +694,26 @@ void Parser::update_cmd(){
 
 	if(is_next(Token::WHERE)){
 		current_token++;
-		Table t("NULL");
-		condition(t);
+		if(!db->table_exists(table_name))
+			throw runtime_error("Error: Table not found");
+		Table t = db->get_table(table_name);
+		vector<int> to_replace = condition(t);
+		vector<int> attr_indices;
+		for (int i = 0; i < t.get_attributes().size(); ++i){
+			for (int j = 0; j < attrs.size(); ++j){
+				if(t.get_attributes()[i].get_name() == attrs[j])
+					attr_indices.push_back(i);
+			}
+		}
+		vector<Record> new_rec;
+		for (int i = 0; i < to_replace.size(); ++i){
+			vector<string> rec = t.get_records()[to_replace[i]].get_values();
+			for (int j = 0; j < attr_indices.size(); ++j){
+				rec[attr_indices[j]] = new_values[i];
+			}
+			new_rec.push_back(rec);
+		}
+		db->update(table_name,new_rec,to_replace);
 	}
 	else
 		throw runtime_error("Parsing Error");
