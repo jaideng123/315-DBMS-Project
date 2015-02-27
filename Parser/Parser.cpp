@@ -87,11 +87,7 @@ Table Parser::expr(){
 //for nested instructions
 //takes atomic expression without ()
 Table Parser::atomic_expr(){
-	if(is_next(Token::IDENTIFIER)){
-		current_token++;
-		return db->get_table(tokens[current_token].get_value());
-	}
-	else if(is_next(Token::LEFTPAREN)){
+	if(is_next(Token::LEFTPAREN)){
 		current_token++;
 		Table t = atomic_expr();
 		if(!is_next(Token::RIGHTPAREN))
@@ -384,10 +380,10 @@ vector<int> Parser::comparison(Table t){
 		current_token++;
 		indices = compare(t,id,token,tokens[current_token]);
 	}
-	/*else if(is_next(Token::IDENTIFIER)){
+	else if(is_next(Token::IDENTIFIER)){
 		current_token++;
 		indices = compare(t,id,token,tokens[current_token]);
-	}*/
+	}
 	else
 		throw runtime_error("Parsing Error");
 	//check for conjunctions
@@ -437,63 +433,102 @@ vector<int> Parser::and_indices(vector<int> v1, vector<int> v2){
 vector<int> Parser::compare(Table t,string id,Token::Token_Type op,Token token){
 	//find index of field to compare
 	int attr_index = -1;
+	int attr_index_2 = -1;
 	for (int i = 0; i < t.get_attributes().size(); ++i){
 		if(t.get_attributes()[i].get_name() == id)
 			attr_index = i;
 	}
 	if(attr_index == -1)
 		throw runtime_error("Error: Attribute does not exist");
+	//grab attribute index 2 if needed
+	if(token.get_type() == Token::IDENTIFIER){
+		for (int i = 0; i < t.get_attributes().size(); ++i){
+			if(t.get_attributes()[i].get_name() == token.get_value())
+				attr_index_2 = i;
+		}
+		if(attr_index_2 == -1)
+			throw runtime_error("Error: Attribute does not exist");
+	}
 	//get indices of corresponding records
+	bool is_num = (token.get_type() == Token::NUMBER ||
+		(token.get_type() == Token::IDENTIFIER && 
+		t.get_attributes()[attr_index_2].get_type() == "INTEGER"));
 	vector<int> indices;
 	vector<Record> rec = t.get_records();
-	if(token.get_type() == Token::NUMBER){
+	string op1 = "";
+	string op2 = token.get_value();
+	if(is_num){
 		if(op == Token::EQ){
 			for (int i = 0; i < rec.size(); ++i){
-				if(stoi(rec[i].get_entry(attr_index)) == stoi(token.get_value()))
+				op1 = rec[i].get_entry(attr_index);
+				if(token.get_type() == Token::IDENTIFIER)
+					op2 = rec[i].get_entry(attr_index_2);
+				if(stoi(op1) == stoi(op2))
 					indices.push_back(i);
 			}
 		}
 		else if(op == Token::LT){
 			for (int i = 0; i < rec.size(); ++i){
-				if(stoi(rec[i].get_entry(attr_index)) < stoi(token.get_value()))
+				op1 = rec[i].get_entry(attr_index);
+				if(token.get_type() == Token::IDENTIFIER)
+					op2 = rec[i].get_entry(attr_index_2);
+				if(stoi(op1) < stoi(op2))
 					indices.push_back(i);
 			}
 		}
 		else if(op == Token::LEQ){
 			for (int i = 0; i < rec.size(); ++i){
-				if(stoi(rec[i].get_entry(attr_index)) <= stoi(token.get_value()))
+				op1 = rec[i].get_entry(attr_index);
+				if(token.get_type() == Token::IDENTIFIER)
+					op2 = rec[i].get_entry(attr_index_2);
+				if(stoi(op1) <= stoi(op2))
 					indices.push_back(i);
 			}
 		}
 		else if(op == Token::GT){
 			for (int i = 0; i < rec.size(); ++i){
-				if(stoi(rec[i].get_entry(attr_index)) > stoi(token.get_value()))
+				op1 = rec[i].get_entry(attr_index);
+				if(token.get_type() == Token::IDENTIFIER)
+					op2 = rec[i].get_entry(attr_index_2);
+				if(stoi(op1) > stoi(op2))
 					indices.push_back(i);
 			}
 		}
 		else if(op == Token::GEQ){
 			for (int i = 0; i < rec.size(); ++i){
-				if(stoi(rec[i].get_entry(attr_index)) >= stoi(token.get_value()))
+				op1 = rec[i].get_entry(attr_index);
+				if(token.get_type() == Token::IDENTIFIER)
+					op2 = rec[i].get_entry(attr_index_2);
+				if(stoi(op1) >= stoi(op2))
 					indices.push_back(i);
 			}
 		}
 		else if(op == Token::NEQ){
 			for (int i = 0; i < rec.size(); ++i){
-					if(stoi(rec[i].get_entry(attr_index)) != stoi(token.get_value()))
-						indices.push_back(i);
+				op1 = rec[i].get_entry(attr_index);
+				if(token.get_type() == Token::IDENTIFIER)
+					op2 = rec[i].get_entry(attr_index_2);
+				if(stoi(op1) != stoi(op2))
+					indices.push_back(i);
 			}
 		}
 	}
-	else if(token.get_type() == Token::LITERAL){
+	else{
 		if(op == Token::EQ){
 			for (int i = 0; i < rec.size(); ++i){
-				if(rec[i].get_entry(attr_index) == token.get_value())
+				op1 = rec[i].get_entry(attr_index);
+				if(token.get_type() == Token::IDENTIFIER)
+					op2 = rec[i].get_entry(attr_index_2);
+				if(op1 == op2)
 					indices.push_back(i);
 			}
 		}
 		else if(op == Token::NEQ){
 			for (int i = 0; i < rec.size(); ++i){
-				if(rec[i].get_entry(attr_index) != token.get_value())
+				op1 = rec[i].get_entry(attr_index);
+				if(token.get_type() == Token::IDENTIFIER)
+					op2 = rec[i].get_entry(attr_index_2);
+				if(op1 != op2)
 					indices.push_back(i);
 			}
 		}

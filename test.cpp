@@ -50,7 +50,7 @@ using namespace std;
 	db.execute(q);
 	db.db.show("testing");
 	
-	q = "testing <- test * testing;";
+	q = "testing <- SELECT (id == new_id) (test * testing);";
 	db.execute(q);
 	db.db.show("testing");
 	

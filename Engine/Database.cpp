@@ -202,11 +202,11 @@ Table Database::set_product(Table t1, Table t2){
 	
 	vector<Attribute> attributes;
 	for(int i = 0; i< t1.get_attributes().size(); i++){
-		Attribute attr(t1.get_attribute(i).get_name()+"_1",t1.get_attribute(i).get_type());
+		Attribute attr(t1.get_attribute(i).get_name(),t1.get_attribute(i).get_type());
 		prod.add_attribute(attr);
 	}
 	for(int i = 0; i< t2.get_attributes().size(); i++){
-		Attribute attr(t2.get_attribute(i).get_name()+"_2",t2.get_attribute(i).get_type());
+		Attribute attr(t2.get_attribute(i).get_name(),t2.get_attribute(i).get_type());
 		prod.add_attribute(attr);
 	}
 	
