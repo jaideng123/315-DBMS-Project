@@ -33,26 +33,26 @@ using namespace std;
 	//query tests
  	string q = "testing <- SELECT (id < 5 && (name == \"Eric\" || name != \"Tristan\")) test;";
 	db.execute(q);
-	db.db.show("testing");
+	db.execute("SHOW testing;");
 	
 	q = "testing <- test - testing;";
 	db.execute(q);
-	db.db.show("testing");
+	db.execute("SHOW testing;");
 	
 	q = "testing <- test + testing;";
 	db.execute(q);
-	db.db.show("testing");
+	db.execute("SHOW testing;");
 	
 	q = "testing <- RENAME (new_id,new_name,new_descr,new_user_id) testing;";
 	db.execute(q);
-	db.db.show("testing");
+	db.execute("SHOW testing;");
 	
 	q = "testing <- PROJECT (new_id,new_name) testing;";
 	db.execute(q);
-	db.db.show("testing");
+	db.execute("SHOW testing;");
 	
 	q = "testing <- SELECT (id == new_id) (test * testing);";
 	db.execute(q);
-	db.db.show("testing");
+	db.execute("SHOW testing;");
 	return 0;
 } 
