@@ -4,12 +4,16 @@
 
 using namespace std;
 
+//main parse function
 void Parser::parse(string input){
 	Tokenizer t(input);
 	tokens = t.get_tokens();
 	current_token = 0;
+	//check for semicolon + empty set
 	if(tokens.size() == 0)
 		return;
+	if(tokens.back().get_type() != Token::SEMICOLON)
+		throw runtime_error("Parsing Error");
 	if(tokens[current_token].get_type() == Token::IDENTIFIER){
 		string name = tokens[current_token].get_value();
 		Table t = query();
@@ -22,8 +26,6 @@ void Parser::parse(string input){
 	else{
 		command();
 	}
-	if(!is_next(Token::SEMICOLON))
-		throw runtime_error("Parsing Error");
 
 }
 
@@ -39,13 +41,10 @@ Table Parser::query(){
 Table Parser::expr(){
 	if(is_next(Token::SELECT))
 		return select_expr();
-		
 	else if(is_next(Token::RENAME))
 		return rename_expr();
-		
 	else if(is_next(Token::PROJECT))
 		return project_expr();
-		
 	else if(is_next(Token::IDENTIFIER)){
 		current_token++;
 		Table t = db->get_table(tokens[current_token].get_value());
@@ -60,7 +59,6 @@ Table Parser::expr(){
 		else
 			throw runtime_error("Parsing Error");
 	}
-	
 	else if(is_next(Token::LEFTPAREN)){
 		current_token++;
 		Table t = atomic_expr();
@@ -83,7 +81,7 @@ Table Parser::expr(){
 		throw runtime_error("Parsing Error");
 }
 
-//for nested instructions
+//for nested expressions
 //takes atomic expression without ()
 Table Parser::atomic_expr(){
 	if(is_next(Token::LEFTPAREN)){
@@ -98,7 +96,7 @@ Table Parser::atomic_expr(){
 	}
 }
 
-//for select expressions
+//Parses select expressions
 Table Parser::select_expr(){
 	//select
 	current_token++;
@@ -152,6 +150,7 @@ void Parser::eat_condition(){
 	}
 	return;
 }
+//helper function to parse + return the contents of a list
 vector<string> Parser::grab_list(){
 	vector<string> new_attr;
 	while(!is_next(Token::RIGHTPAREN)){
@@ -166,7 +165,7 @@ vector<string> Parser::grab_list(){
 	return new_attr;
 }
 
-//for rename expressions
+//Parses rename expressions
 Table Parser::rename_expr(){
 	//rename
 	current_token++;
@@ -196,7 +195,7 @@ Table Parser::rename_expr(){
 		throw runtime_error("Parsing Error");
 }
 
-//for project expressions
+//Parses project expressions
 Table Parser::project_expr(){
 	//project
 	current_token++;
@@ -235,7 +234,7 @@ Table Parser::project_expr(){
 		throw runtime_error("Parsing Error");
 }
 
-//for union expressions
+//Parses union expressions
 Table Parser::union_expr(Table t1){
 	//+ 
 	current_token++;
@@ -257,7 +256,7 @@ Table Parser::union_expr(Table t1){
 		throw runtime_error("Parsing Error");
 }
 
-//for difference expressions
+//Parses difference expressions
 Table Parser::diff_expr(Table t1){
 	//- 
 	current_token++;
@@ -279,7 +278,7 @@ Table Parser::diff_expr(Table t1){
 		throw runtime_error("Parsing Error");
 }
 
-//for product expressions
+//Parses product expressions
 Table Parser::prod_expr(Table t1){
 	//*
 	current_token++;
@@ -301,9 +300,9 @@ Table Parser::prod_expr(Table t1){
 		throw runtime_error("Parsing Error");
 }
 
-//for condition parsing, it will start pointing
-//at just before the first left parentheses and should end
-//pointing at the last right parentheses
+//Parses conditions + returns indices that match condition,
+//it will start pointing at just before the first left parentheses 
+//and should end pointing at the last right parentheses
 vector<int> Parser::condition(Table t){
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
@@ -348,7 +347,7 @@ vector<int> Parser::condition(Table t){
 	return indices;
 }
 
-//for comparisons in condition
+//Parses comparisons in condition
 vector<int> Parser::comparison(Table t){
 	vector<int> indices;
 	//operand 1
@@ -415,6 +414,7 @@ vector<int> Parser::and_indices(vector<int> v1, vector<int> v2){
 	}
 	return v;
 }
+
 //pick out index that contains id
 int Parser::find_index(vector<Attribute> attrs, string id){
 	int index = -1;
@@ -522,35 +522,26 @@ vector<int> Parser::compare(Table t,string id,Token::Token_Type op,Token token){
 	return indices;
 }
 
+//Parses Commands
 void Parser::command(){
-
-	if(tokens[current_token].get_type() == Token::OPEN){
+	if(tokens[current_token].get_type() == Token::OPEN)
 		open_cmd();
-	}
-	else if(tokens[current_token].get_type() == Token::CLOSE){
+	else if(tokens[current_token].get_type() == Token::CLOSE)
 		close_cmd();
-	}
-	else if(tokens[current_token].get_type() == Token::WRITE){
+	else if(tokens[current_token].get_type() == Token::WRITE)
 		write_cmd();
-	}
-	else if(tokens[current_token].get_type() == Token::EXIT){
+	else if(tokens[current_token].get_type() == Token::EXIT)
 		exit_cmd();
-	}
-	else if(tokens[current_token].get_type() == Token::SHOW){
+	else if(tokens[current_token].get_type() == Token::SHOW)
 		show_cmd();
-	}
-	else if(tokens[current_token].get_type() == Token::CREATE){
+	else if(tokens[current_token].get_type() == Token::CREATE)
 		create_cmd();
-	}
-	else if(tokens[current_token].get_type() == Token::UPDATE){
+	else if(tokens[current_token].get_type() == Token::UPDATE)
 		update_cmd();
-	}
-	else if(tokens[current_token].get_type() == Token::INSERT){
+	else if(tokens[current_token].get_type() == Token::INSERT)
 		insert_cmd();
-	}
-	else if(tokens[current_token].get_type() == Token::DELETE){
+	else if(tokens[current_token].get_type() == Token::DELETE)
 		delete_cmd();
-	}
 	else
 		throw runtime_error("Parsing Error");
 }
@@ -594,6 +585,7 @@ void Parser::show_cmd(){
 	return;
 }
 
+//Parses+ executes Create commands
 void Parser::create_cmd(){
 	if(!is_next(Token::TABLE))
 		throw runtime_error("Parsing Error");
@@ -603,7 +595,7 @@ void Parser::create_cmd(){
 		throw runtime_error("Parsing Error");
 	current_token++;
 	string id = tokens[current_token].get_value();
-	//attribute list
+	//grab attribute list
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	current_token++;
@@ -642,13 +634,13 @@ void Parser::create_cmd(){
 		current_token++;
 	}
 	current_token++;
+	//check for primary key (unused)
 	if(!is_next(Token::PRIMARY))
 		throw runtime_error("Parsing Error");
 	current_token++;
 	if(!is_next(Token::KEY))
 		throw runtime_error("Parsing Error");
 	current_token++;
-	//------------------------------(
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	current_token++;
@@ -660,11 +652,11 @@ void Parser::create_cmd(){
 			break;
 		current_token++;
 	}
-	//-------------------------------)	
 	current_token++;
 	db->create(id,attrs);
 }
 
+//Parses+ executes update commands
 void Parser::update_cmd(){
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
@@ -675,6 +667,7 @@ void Parser::update_cmd(){
 	current_token++;
 	vector<string> attrs;
 	vector<string> new_values;
+	//get list of values to change
 	while(!is_next(Token::WHERE)){
 		if(!is_next(Token::IDENTIFIER))
 			throw runtime_error("Parsing Error");
@@ -699,6 +692,7 @@ void Parser::update_cmd(){
 		Table t = db->get_table(table_name);
 		vector<int> to_replace = condition(t);
 		vector<int> attr_indices;
+		//get indices of parts of the record we are going to change
 		for (int i = 0; i < t.get_attributes().size(); ++i){
 			for (int j = 0; j < attrs.size(); ++j){
 				if(t.get_attributes()[i].get_name() == attrs[j])
@@ -706,6 +700,7 @@ void Parser::update_cmd(){
 			}
 		}
 		vector<Record> new_rec;
+		//create modified records
 		for (int i = 0; i < to_replace.size(); ++i){
 			vector<string> rec = t.get_records()[to_replace[i]].get_values();
 			for (int j = 0; j < attr_indices.size(); ++j){
@@ -719,6 +714,7 @@ void Parser::update_cmd(){
 		throw runtime_error("Parsing Error");
 }
 
+//Parses+ executes Insert commands
 void Parser::insert_cmd(){
 	if(!is_next(Token::INTO))
 		throw runtime_error("Parsing Error");
@@ -726,6 +722,7 @@ void Parser::insert_cmd(){
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	//grab table name from token
 	string table_name = tokens[current_token].get_value();
 	if(!is_next(Token::VALUES))
 		throw runtime_error("Parsing Error");
@@ -737,8 +734,10 @@ void Parser::insert_cmd(){
 		current_token++;
 		Table t = expr();
 		vector<Record> new_rec = t.get_records();
+		//check for compatible records
 		if(new_rec[0].get_size() != db->get_table(table_name).get_records()[0].get_size())
 			throw runtime_error("Error: sizes of records do not match");
+		//insert all records in
 		for(int i = 0; i < new_rec.size(); ++i)
 			db->insert(table_name,new_rec[i]);
 	}
@@ -746,13 +745,14 @@ void Parser::insert_cmd(){
 	{
 		current_token++;
 		Record new_rec(grab_list());
-		current_token++;
 		db->insert(table_name,new_rec);
+		current_token++;
 	}
 	else
 		throw runtime_error("Parsing Error");
 }
 
+//Parses+ executes delete commands
 void Parser::delete_cmd(){
 	if(!is_next(Token::FROM))
 		throw runtime_error("Parsing Error");
@@ -760,6 +760,7 @@ void Parser::delete_cmd(){
 	if(!is_next(Token::IDENTIFIER))
 		throw runtime_error("Parsing Error");
 	current_token++;
+	//grab table name from token
 	string table_name = tokens[current_token].get_value();
 	if(is_next(Token::WHERE)){
 		current_token++;
