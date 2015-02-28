@@ -22,18 +22,17 @@ void Parser::parse(string input){
 	else{
 		command();
 	}
+	if(!is_next(Token::SEMICOLON))
+		throw runtime_error("Parsing Error");
 
 }
 
 //parse query
 Table Parser::query(){
-
 	if(!is_next(Token::LEFTARROW))
 		throw runtime_error("Parsing Error");
 	current_token++;
 	return expr();
-	if(!is_next(Token::SEMICOLON))
-		throw runtime_error("Parsing Error");
 }
 
 //determine type of expression
@@ -604,7 +603,7 @@ void Parser::create_cmd(){
 		throw runtime_error("Parsing Error");
 	current_token++;
 	string id = tokens[current_token].get_value();
-	//attribue list
+	//attribute list
 	if(!is_next(Token::LEFTPAREN))
 		throw runtime_error("Parsing Error");
 	current_token++;
@@ -710,7 +709,7 @@ void Parser::update_cmd(){
 		for (int i = 0; i < to_replace.size(); ++i){
 			vector<string> rec = t.get_records()[to_replace[i]].get_values();
 			for (int j = 0; j < attr_indices.size(); ++j){
-				rec[attr_indices[j]] = new_values[i];
+				rec[attr_indices[j]] = new_values[j];
 			}
 			new_rec.push_back(rec);
 		}
@@ -747,6 +746,7 @@ void Parser::insert_cmd(){
 	{
 		current_token++;
 		Record new_rec(grab_list());
+		current_token++;
 		db->insert(table_name,new_rec);
 	}
 	else

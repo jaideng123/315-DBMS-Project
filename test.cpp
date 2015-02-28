@@ -15,12 +15,22 @@ using namespace std;
 		string q = "INSERT INTO test VALUES FROM ("+ pid+",\"Dummy String\",\"Dummy Text\","+uid+");";
 		db.execute(q);
 	}
+	//command tests
 	db.execute("SHOW test;");
 	db.execute("WRITE test;");
 	db.execute("CLOSE test;");
 	db.execute("OPEN test;");
 	db.execute("SHOW test;");
-/* 
+	db.execute("UPDATE test SET name = \"jaiden\" WHERE (name == \"Dummy String\"); ");
+	db.execute("SHOW test;");
+	db.execute("INSERT INTO test VALUES FROM (25,\"Eric\",\"Tristan\",3);" );
+	db.execute("SHOW test;");
+	db.execute("DELETE FROM test WHERE (name == \"jaiden\");" );
+	db.execute("SHOW test;");
+	db.execute("CLOSE test;");
+	db.execute("OPEN test;");
+	
+	//query tests
  	string q = "testing <- SELECT (id < 5 && (name == \"Eric\" || name != \"Tristan\")) test;";
 	db.execute(q);
 	db.db.show("testing");
@@ -44,6 +54,5 @@ using namespace std;
 	q = "testing <- SELECT (id == new_id) (test * testing);";
 	db.execute(q);
 	db.db.show("testing");
-	 */
 	return 0;
 } 
