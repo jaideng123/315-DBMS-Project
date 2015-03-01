@@ -18,7 +18,7 @@ class Database{
 friend class Parser;
 public:
 	//constructor
-	Database(){system("mkdir Databases 2&>1 > /dev/null");}
+	Database(){system("mkdir -p Databases");}
 
 	vector<Table> tables;
 

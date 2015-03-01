@@ -11,8 +11,8 @@ int DBMS::execute(string ex){
 		p.parse(ex);
 		return 0;
 	}
-	catch(...){
-		cout<<"Invalid Command"<<endl;
+	catch(exception& e){
+		cout<<e.what()<<endl;
 		return 1;
 	}
 	#endif

@@ -11,7 +11,7 @@ void Database::open(string table_name) {
 	myFile.open(filename);
 	
 	if(!myFile) {
-		cout<<"Error: unable to open file!\n";
+		throw runtime_error("Error: unable to open file!\n");
 	}
 	else {
 		//Get first line containing attributes
@@ -30,7 +30,7 @@ void Database::open(string table_name) {
 //remove table from memory
 void Database::close(string table_name) {
 	if(!table_exists(table_name)){
-		cout<<"Error Table does not exist";
+		throw runtime_error("Error Table does not exist");
 		return;
 	}
 	for (int i = 0; i < tables.size(); ++i)
@@ -46,7 +46,7 @@ void Database::close(string table_name) {
 //write table to disk
 void Database::write(string table_name){
 	if(!table_exists(table_name)){
-		cout<<"Error: Table not found\n";
+		throw runtime_error("Error: Table not found\n");
 		return;
 	}
 
@@ -55,7 +55,7 @@ void Database::write(string table_name){
 	ofstream my_file;
   	my_file.open(file_name.c_str());
 	if(!my_file) {
-		cout<<"Error: unable to open file!\n";
+		throw runtime_error("Error: unable to open file!\n");
 	}
 
   	//write attributes
@@ -87,7 +87,7 @@ void Database::create(string table_name, vector<Attribute> v){
 	if(!table_exists(table_name))
 		tables.push_back(Table(table_name, v));
 	else
-		cout<<"Error: Table already exists in database\n";
+		throw runtime_error("Error: Table already exists in database\n");
 }
 
 //insert a record into a table in tables
@@ -97,10 +97,10 @@ void Database::insert(string table_name, Record record){
 		if(t->is_valid(record))
 			t->add_record(record);
 		else
-			cout<<"Record is not compatible with table";
+			throw runtime_error("Record is not compatible with table");
 	}
 	else
-		cout<<"Error: Table not found\n";
+		throw runtime_error("Error: Table not found\n");
 }
 
 //prints table
@@ -109,14 +109,14 @@ void Database::show(string table_name){
 		find_table(table_name)->print();
 	}
 	else
-		cout<<"Error: Table not found\n";
+		throw runtime_error("Error: Table not found\n");
 }
 
 
 // copies records out of a table then over writes it
 void Database::delete_records(string table_name, vector<int> to_remove){
 	if(!table_exists(table_name)){	
- 		cout<<"Error: Table not found\n";
+ 		throw runtime_error("Error: Table not found\n");
  		return;
  	}
 	vector<Record> rec;
@@ -142,7 +142,7 @@ void Database::delete_records(string table_name, vector<int> to_remove){
 		}
 	}
 	else
-		cout<<"Error: Table not found\n";
+		throw runtime_error("Error: Table not found\n");
 
 }
 
@@ -179,14 +179,14 @@ Table Database::set_union(Table t1, Table t2){
 		return sunion;
 	}
 	else
-		cout<<"Error: Sets are incompatible\n";
+		throw runtime_error("Error: Sets are incompatible\n");
 	return Table("NULL");
 }
 
 //everything in t1 that is not in t2
 Table Database::set_difference(Table t1, Table t2){
 	if(!union_compatible(t1,t2)){
-		cout<<"Error: Sets are incompatible\n";
+		throw runtime_error("Error: Sets are incompatible\n");
 		return Table("NULL");
 	}
 	Table diff = Table(t1.get_name());
@@ -274,7 +274,7 @@ Table Database::get_table(string table_name){
 		return	*find_table(table_name);
 	}
 	else{
-		cout<<"Error: Table not found: "<<table_name<<"\n";
+		cout<<"Error: Table not found: "+table_name+"\n";
 		return Table("NULL");
 	}
 }
