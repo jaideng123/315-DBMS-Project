@@ -14,6 +14,8 @@ public:
 	void makePost();
 	void makeComment();
 
+	void send_to_parser(string command);
+
 	//Edit DB functions
 	void editTitle();			//
 	void editAuthor();
@@ -31,11 +33,11 @@ public:
 	void searchTags();
 	void searchDate();
 
-	void send_to_parser(string command);
-	//This function should probably write a copy of the app to disk!
+ 	//This function should probably write a copy of the app to disk!
 	void exitApp();
 
-	
+private:
+	Parser p;
 
 	//Menu Functions
 	//void main_menu();
@@ -49,4 +51,3 @@ private:
 };
 
 #endif /* WEBLOG_H */
-
