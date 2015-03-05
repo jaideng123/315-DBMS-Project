@@ -1,5 +1,6 @@
 #include <iostream>
 #include "parser.h"
+#include "Weblog.h"
 
 using namespace std;
 
@@ -56,11 +57,13 @@ void main_menu(){
 
 	if(choice == 1){
 		//add what to ask when making a new post
+	
 	}
 	else if(choice == 2){
 		search_menu();
 	}
 	else if(choice == 3){
+		cout << "Goodbye.\n";
 		exit(0);
 	}
 }

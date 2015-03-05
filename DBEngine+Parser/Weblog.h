@@ -31,6 +31,7 @@ public:
 	void searchTags();
 	void searchDate();
 
+	void send_to_parser(string command);
 	//This function should probably write a copy of the app to disk!
 	void exitApp();
 
@@ -41,7 +42,8 @@ public:
 	//void post_menu();
 	//void search_menu();
 
-
+private: 
+	Parser p;
 
 
 };
