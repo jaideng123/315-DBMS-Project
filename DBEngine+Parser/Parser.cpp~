@@ -961,29 +961,24 @@ string Parser::program(){
 
 //=============================================================================
 
-void Parser::parse(string commandLine){
+void Parser::parse(){
 	// function that actually does the parsing
 	
 while (this->getKeepParsing()){
-	
-	streambuf* orig = cin.rdbuf();		//keep
-	istringstream input(commandLine);				//keep
-	cin.rdbuf(input.rdbuf());	//redirect string 	//keep
-	//p.parse(test1);	
 		
-	//this should be used if parsing from command line
 		
+	while (true){//this should be used if parsing from command line
+		cout << "> ";
 		Token t = ts.get();
 		ts.putback(t);
 		program();
 		if (ts.get().kind == newLine){
-			cin.rdbuf(orig);
-			return;
+			break;
 		}
 		else{
 			cout << "Error :: There must be a ';' at the end of a statement." << endl;
 		}
-	cin.rdbuf(orig);
+	}
 	cout << endl;
 	
 
@@ -1125,4 +1120,3 @@ int main2(){
 }
 
 //=============================================================================
-

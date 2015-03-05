@@ -37,9 +37,9 @@ public:
 	
 
 	//Menu Functions
-	//void main_menu();
-	//void post_menu();
-	//void search_menu();
+	void main_menu();
+	void post_menu();
+	void search_menu();
 
 
 
@@ -47,4 +47,3 @@ public:
 };
 
 #endif /* WEBLOG_H */
-

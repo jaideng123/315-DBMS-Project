@@ -58,9 +58,8 @@ void Weblog::exitApp(){
 
 
 int main(){
-	Parser p;
-	p.parse("CREATE TABLE posts(title VARCHAR(30) ) PRIMARY KEY (title) ;");
-	p.parse("SHOW posts;");
+	//Parser p;
+	//p.parse();
 
 	return 0;
 }
