@@ -1004,7 +1004,7 @@ while (this->getKeepParsing()){
 
 //=============================================================================
 
-int main2(){
+// int main2(){
 	//Parser p;
 	//============================================ Test Cases ================================================
 	// string test1 = "CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);";
@@ -1121,8 +1121,8 @@ int main2(){
 	//return buffer to terminal
 	cin.rdbuf(orig);*/
 
-	return 0;
-}
+// 	return 0;
+// }
 
 //=============================================================================
 

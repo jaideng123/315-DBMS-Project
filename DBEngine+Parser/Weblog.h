@@ -15,6 +15,7 @@ public:
 	void makeComment();
 
 	void send_to_parser(string command);
+	void view();
 
 	//Edit DB functions
 	void editTitle();			//
@@ -33,6 +34,10 @@ public:
 	void searchTags();
 	void searchDate();
 
+	void main_menu();
+	void search_menu();
+	void func_menu();
+
  	//This function should probably write a copy of the app to disk!
 	void exitApp();
 
@@ -43,9 +48,6 @@ private:
 	//void main_menu();
 	//void post_menu();
 	//void search_menu();
-
-private: 
-	Parser p;
 
 
 };

@@ -620,8 +620,8 @@ vector<string> getAllFilesInFolder(string fileName){
 		relationFile.close();
 	}
 	else{
-		cout << "Error in getAllFilesInFolder() :: \"Relations.db\" is not in the current folder." << endl;
-		cout << "You may Create relations but there are no relations to read." << endl;
+		//cout << "Error in getAllFilesInFolder() :: \"Relations.db\" is not in the current folder." << endl;
+		//cout << "You may Create relations but there are no relations to read." << endl;
 	}
 
 	return files;

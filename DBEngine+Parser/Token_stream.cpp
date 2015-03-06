@@ -116,7 +116,20 @@ Token Token_stream::get(){
 				s += ch; // apends the ch onto the string s
 			}
 			else{ isLiteral = true; }
-			while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_' || ch == '"')){ if (ch != '"'){ s += ch; } }
+			if (isLiteral){
+				while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_' || ch == '"' || isspace(ch)) || ch == '/' || ch == '.'){
+					if (ch != '"'){
+						s += ch;
+					}
+				}
+			}
+			else{
+				while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_' || ch == '"')){
+					if (ch != '"'){
+						s += ch;
+					}
+				}
+			}
 			if (ch == ' ' && (s == "CREATE" || s == "INSERT" || s == "PRIMARY" || s == "VALUES" || s == "DELETE")){
 				s += " ";
 				while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_')) s += ch;
