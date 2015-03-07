@@ -11,7 +11,12 @@ void read_string(string &s){
 }
 
 Weblog::Weblog(){
-	//p.parse("CREATE TABLE posts(title VARCHAR(30) , author VARCHAR(30) , content VARCHAR(140) , tags VARCHAR(100) , date VARCHAR (14) ) PRIMARY KEY (title , author) ;");
+	// vector <string> relations = getAllFilesInFolder("Relations.db");
+	// if (!this->isOnDisk("posts", relations)){
+	// 	cout<<"I am here";
+	// 	p.parse("CREATE TABLE posts (title VARCHAR(30) , author VARCHAR(30) , content VARCHAR(140) , tags VARCHAR(100) , date VARCHAR (14) ) PRIMARY KEY (title , author) ;");
+	// 	p.parse("WRITE posts;");
+	// }
 	p.parse("OPEN posts;");
 	p.parse("SHOW posts;");
 }
@@ -206,8 +211,8 @@ void Weblog::searchAuthor(){
 	cout << "Enter the author: ";
 	read_string(user);
 	//
-	string command = "temp_author <- select (author == \" " + user + "\") posts;";
-
+	string command = "temp_author <- select (author == \"" + user + "\") posts;";
+	cout <<command;
 	send_to_parser(command);
 
 	//vector<Entry> v = ;
@@ -222,7 +227,7 @@ void Weblog::searchTitle(){
 	cout << "Enter the title: ";
 	read_string(user);
 	//
-	string command = "temp_title <- select (title == \" " + user + "\") posts;";
+	string command = "temp_title <- select (title == \"" + user + "\") posts;";
 
 	send_to_parser(command);
 }
@@ -232,7 +237,7 @@ void Weblog::searchTags(){
 	cout << "Enter the tags: ";
 	read_string(user);
 	//
-	string command = "temp_tags <- select (author == \" " + user + "\") posts;";
+	string command = "temp_tags <- select (author == \"" + user + "\") posts;";
 	send_to_parser(command);
 }
 void Weblog::searchDate(){
@@ -241,7 +246,7 @@ void Weblog::searchDate(){
 	cout << "Enter the date: ";
 	read_string(user);
 	//
-	string command = "temp_date <- select (author == \" " + user + "\") posts;";
+	string command = "temp_date <- select (author == \"" + user + "\") posts;";
 	send_to_parser(command);
 }
 
@@ -252,11 +257,52 @@ void Weblog::searchDate(){
 // 	send_to_parser(command);
 // }
 
-void Weblog::send_to_parser(string command){
+void Weblog::send_to_parser(string command) {
 	p.parse(command);
+	
 }
 
-int main(){
+string Weblog::getOutput(string command){
+	//int child = fork();
+	//if(child)
+}
+
+vector<string> Weblog::getAllFilesInFolder(string fileName){
+	//returns all the names of the files of relations on the disk
+	vector<string> files;
+	string relationName;
+	ifstream relationFile(fileName);
+	if (relationFile.is_open()){
+		while (getline(relationFile, relationName)){
+			files.push_back(relationName);
+		}
+		relationFile.close();
+	}
+	else{
+		//cout << "Error in getAllFilesInFolder() :: \"Relations.db\" is not in the current folder." << endl;
+		//cout << "You may Create relations but there are no relations to read." << endl;
+	}
+
+	return files;
+}
+
+bool Weblog::isOnDisk(string rName, vector<string> relationsOnDisk){
+	//Checks if the relation is already on the disk
+	//returns true if it is already on disk false otherwise
+	for (int i = 0; i < relationsOnDisk.size(); ++i){
+		if (relationsOnDisk[i] == rName){
+			return true;
+		}
+	}
+	return false;
+}
+
+void Weblog::setViewBuffer(){
+	//string buffer = 
+}
+
+
+int main(int argc, char * argv[] ){
 	Weblog app;
 
 	app.main_menu();

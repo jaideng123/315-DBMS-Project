@@ -3,7 +3,14 @@
 
 //#include "Headers.h"
 #include "Parser.h"
-//#include "Database.h"
+
+// #include <stdio.h>
+// #include <unistd.h>
+// #include <stdlib.h>
+// #include <sys/types.h>
+// #include <sys/wait.h>
+// #include <iostream>
+
 
 
 class Weblog{
@@ -16,6 +23,7 @@ public:
 
 	void send_to_parser(string command);
 	void view();
+	string getOutput(string command);
 
 	//Edit DB functions
 	void editTitle();			//
@@ -34,6 +42,9 @@ public:
 	void searchTags();
 	void searchDate();
 
+	//Helper Functions
+	void setViewBuffer();
+
 	void main_menu();
 	void search_menu();
 	void func_menu();
@@ -41,8 +52,12 @@ public:
  	//This function should probably write a copy of the app to disk!
 	void exitApp();
 
+	bool isOnDisk(string rName, vector<string> relationsOnDisk);
+	vector<string> getAllFilesInFolder(string fileName);
+
 private:
 	Parser p;
+	vector <vector<string> > viewBuffer;
 
 	//Menu Functions
 	//void main_menu();

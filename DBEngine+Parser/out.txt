@@ -1,0 +1,32 @@
+Relation : posts
+Primary Keys : title, author
+Attributes : 
+title : Cats, Test2
+author : Eric, Eric
+content : I really like to pet cats., I like trees and pizza.
+tags : cats, weird
+date : 09/20/2001, 09/12/2300
+[Main Menu]
+
+1. Make a new post
+2. Search a post
+3. Exit
+
+* Enter command: 
+[Search Menu]
+
+Search by:
+1. Author
+2. Title
+3. Tag(s)
+4. Date
+5. Return to Main Menu
+
+* Enter command: Enter the author: temp_author <- select (author == "Eric") posts;Relation : temp_author
+Primary Keys : 
+Attributes : 
+title : Cats, Test2
+author : Eric, Eric
+content : I really like to pet cats., I like trees and pizza.
+tags : cats, weird
+date : 09/20/2001, 09/12/2300
