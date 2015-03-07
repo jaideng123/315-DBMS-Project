@@ -212,13 +212,13 @@ void Weblog::searchAuthor(){
 	read_string(user);
 	//
 	string command = "temp_author <- select (author == \"" + user + "\") posts;";
-	cout <<command;
+	//cout <<command;
 	send_to_parser(command);
-
+	Relation buffer = p.db.getRelation("temp_author");
+	vector< <vector<Entry>> records;
+	
 	//vector<Entry> v = ;
 
-	string command2 = "SHOW temp_author;";
-	send_to_parser(command2);
 }
 void Weblog::searchTitle(){
 

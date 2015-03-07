@@ -15,7 +15,7 @@ private:
 
 	bool keepParsing = true; // used for Exit Command
 
-	Database db;
+	
 
 	vector<string> cleanUpNames;
 
@@ -311,6 +311,8 @@ private:
 public:
 	Parser();
 	~Parser();
+
+	Database db;
 
 	void parse(string commandLine); // used to parse
 
