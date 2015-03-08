@@ -11,14 +11,51 @@ void read_string(string &s){
 }
 
 Weblog::Weblog(){
-	// vector <string> relations = getAllFilesInFolder("Relations.db");
-	// if (!this->isOnDisk("posts", relations)){
-	// 	cout<<"I am here";
-	// 	p.parse("CREATE TABLE posts (title VARCHAR(30) , author VARCHAR(30) , content VARCHAR(140) , tags VARCHAR(100) , date VARCHAR (14) ) PRIMARY KEY (title , author) ;");
-	// 	p.parse("WRITE posts;");
-	// }
-	p.parse("OPEN posts;");
-	p.parse("SHOW posts;");
+	
+	if (p.db.isOnDisk("posts")){
+		p.parse("OPEN posts;");
+		updatePosts();
+	}
+	else{
+		cout<<"I am here";
+		p.parse("CREATE TABLE posts (title VARCHAR(1000) , author VARCHAR(1000) , content VARCHAR(1400) , tags VARCHAR(1000) , date VARCHAR(1400) , id VARCHAR(1000) ) PRIMARY KEY (id) ;");
+		p.parse("WRITE posts;");
+		p.parse("OPEN posts;");
+	}
+	
+	//p.parse("SHOW posts;");
+
+	
+}
+
+string Weblog::getId(){
+	string date;
+	time_t raw = time(0);
+	tm * ltm = localtime(&raw);
+	string hashcode = "a";
+	hashcode = hashcode + to_string(ltm->tm_mon);
+	hashcode = hashcode + to_string(ltm->tm_mday);
+	hashcode = hashcode + to_string(ltm->tm_year);
+	hashcode = hashcode + to_string(ltm->tm_hour);
+	hashcode = hashcode + to_string(ltm->tm_min);
+	hashcode = hashcode + to_string(ltm->tm_sec);
+	
+	//date.erase(std::remove(date.begin(), date.end(), '\n'), date.end());
+	cout<<hashcode<<'\n';
+
+	return hashcode;
+}
+
+string Weblog::getDate(){
+	string date;
+	time_t raw;
+	tm * timeinfo;
+	time(&raw);
+	timeinfo = localtime(&raw);
+	date = asctime(timeinfo);
+	date.erase(std::remove(date.begin(), date.end(), '\n'), date.end());
+
+	return date;
 }
 
 //Update DB functions
@@ -38,18 +75,78 @@ void Weblog::makePost(){
 	read_string(content);
 	cout << "\nTags: ";
 	read_string(tags);
-	cout << "\nDate(mm/dd/yyyy): ";
-	read_string(date);
+	
+	//Set time
+	date = getDate();
+	string id = getId();
 
-	string input = "INSERT INTO posts VALUES FROM (\"" + title + "\", \"" + author + "\", \"" + content + "\", \"" + tags + "\", \"" + date + "\");"; 
+	string input = "INSERT INTO posts VALUES FROM (\"" + title + "\", \"" + author + "\", \"" + content + "\", \"" + tags + "\", \"" + date + "\", \"" + id + "\") ;"; 
 	send_to_parser(input);
 
-	string command = "WRITE posts;";
+	
+
+	string command = "WRITE posts;";	
 	send_to_parser(command);
+
+	updatePosts();
+
+	
+	// string command2 = "SHOW fun839;";
+	// send_to_parser(command2);
+
 
 	string command1 = "SHOW posts;";
 	send_to_parser(command1);
 }
+
+void Weblog::updatePosts(){
+	
+	//string command = "temp_author <- select (author == \"" + user + "\") posts;";
+	//cout <<command;
+	//send_to_parser(command);
+	Relation buffer = p.db.getRelation("posts");
+
+	//Must clear vector because update uses pushback
+	records.clear();
+	vector< vector<Entry> > temp_Records;
+	Attribute title,authors, content, tags, date, ids; 
+	//cout<<buffer.attributes.size()<<'\n';
+	if (buffer.getAttribute("title").getNumEntries()>0){
+
+		title = buffer.getAttribute("title");
+		authors = buffer.getAttribute("author");
+		content = buffer.getAttribute("content");
+		tags = buffer.getAttribute("tags");
+		date = buffer.getAttribute("date");
+		ids = buffer.getAttribute("id");
+
+		for(int i =0; i < buffer.getAttribute("title").getNumEntries();i++){
+			vector<Entry> temp;
+			temp.push_back(title.getEntry(i));
+			temp.push_back(authors.getEntry(i));
+			temp.push_back(content.getEntry(i));
+			temp.push_back(tags.getEntry(i));
+			temp.push_back(date.getEntry(i));
+			temp.push_back(ids.getEntry(i));
+			temp_Records.push_back(temp);
+		}
+
+		for(int i =0 ; i < temp_Records.size(); i++) {
+			
+			string recTitle = temp_Records[i][0].getData();
+			string recAuthor = temp_Records[i][1].getData();
+			string recContent = temp_Records[i][2].getData();
+			string recTags = temp_Records[i][3].getData();
+			string recDate = temp_Records[i][4].getData();
+			string recId = temp_Records[i][5].getData();
+			records.push_back(Post(recTitle,recAuthor,recContent,recTags,recDate, recId));
+		}
+	}
+
+}
+
+//*************************************************************************************
+//		Menu Interfaces
 
 void Weblog::search_menu(){
 
@@ -112,24 +209,25 @@ void Weblog::main_menu(){
 	}
 }
 
-void Weblog::func_menu(){
+void Weblog::func_menu(Post current){
 
 	int choice; 
 
-	cout << "1. View";
-	cout << "2. Edit";
-	cout << "3. Delete";
-	cout << "4. Comment";
-	cout << "5. Return to Main Menu";
+	cout << "1. View\n";
+	cout << "2. Edit\n";
+	cout << "3. Delete\n";
+	cout << "4. Comment\n";
+	cout << "5. Return to Main Menu\n\n";
+	cout << "* Enter command: ";
 
 	cin >> choice; 
 
 	if(choice == 1){
-
+		current.view();
 		 
 	}
 	else if(choice == 2){
-
+		edit_menu(current);
 		
 	}
 	else if(choice == 3){
@@ -140,14 +238,14 @@ void Weblog::func_menu(){
 
 		int comm_choice;
 
-		cout << "1. Comment on post";
-		cout << "2. Comment on comment";
+		cout << "1. Comment on post\n";
+		cout << "2. Comment on comment\n";
 		cin >> comm_choice;
 
-		if(choice == 1){
-
+		if(comm_choice == 1){
+			makeComment(current);
 		}
-		else if(choice == 2){
+		else if(comm_choice == 2){
 
 		}
 		
@@ -158,35 +256,157 @@ void Weblog::func_menu(){
 	}
 }
 
+void Weblog::edit_menu(Post current){
 
-void Weblog::view(){
+	int choice; 
 
-	// string command = "SHOW posts";
-	// send_to_parser(command);
+	cout << "1. by Author\n";
+	cout << "2. by Title\n";
+	cout << "3. by Content\n";
+	cout << "4. by Tags\n\n";
+	cout << "* Enter command: ";
+
+	cin >> choice; 
+
+	if(choice == 1){
+		editAuthor(current);
+	}
+	else if(choice == 2){
+		editTitle(current);
+	}
+	else if(choice == 3){
+		editContent(current);
+	}
+	else if(choice == 4){
+		editTags(current);
+	}
 }
 
-void Weblog::makeComment(){
+//**************************************************************************************
+
+Post Weblog::getPost(string id){
+	for(int i =0 ; i< records.size(); i++){
+		if(records[i].getId()== id){
+			return records[i];
+		}
+	}
+	//Error Handling should go here in case nothing is found.
+}
+
+void Weblog::makeComment(Post current){
+	
+	if(!(p.db.isOnDisk(current.getId())) ){
+		string makeCommentTable = "CREATE TABLE "+ current.getId() +" (date VARCHAR(1000) , author VARCHAR(1000) , content VARCHAR(1400) , ids VARCHAR(1000) ) PRIMARY KEY (ids) ;";
+		//cout<< makeCommentTable<<'\n'	;
+		send_to_parser(makeCommentTable);
+	}
+	else{
+		cout<<"here\n";
+		string command = "OPEN "+current.getId()+";";
+		cout<<command;
+		send_to_parser(command);
+	}
+	
+	cout<<"made it\n";
+	string date = getDate();
+	string author, comment, id;
+	cout<<"Enter your name: ";
+	read_string(author);
+	cout<<"Enter your comment: ";
+	read_string(comment);
+	id = getId();
+
+
+	string insert = "INSERT INTO "+current.getId()+" VALUES FROM (\"" + date + "\", \"" + author + "\", \"" + comment + "\", \"" + id + "\") ;"; 
+	send_to_parser(insert);
+
+	//Save Changes
+	string write = "WRITE "+current.getId();
+	send_to_parser(write);
 
 }
 
 //Edit DB functions
-void Weblog::editTitle(){
-	//interface
+void Weblog::editTitle(Post current){
+	string input;
 
-	//Get user input
+	cout << "Enter the new title: ";
+	read_string(input);
 
-	//create string
+	
+	string command = "UPDATE posts SET title = \"" + input + "\" WHERE id == \""+current.getId()+"\" ;";
+	cout << command;
+	cin>>input;
+	send_to_parser(command);
 
-	//"UPDATE posts SET title = "userinput" WHERE title==""
+
+	string command1 = "WRITE posts;";
+	send_to_parser(command1);
+	updatePosts();
+
+	string command2 = "SHOW posts;";
+	send_to_parser(command2);
+
 }
-void Weblog::editAuthor(){
+void Weblog::editAuthor(Post current){
+	string input;
 
+	cout << "Enter the new Author: ";
+	read_string(input);
+
+	
+	string command = "UPDATE posts SET author = \"" + input + "\" WHERE (id == \""+current.getId()+"\" ) ;";
+	cout << command;
+	cin>>input;
+	send_to_parser(command);
+
+
+	string command1 = "WRITE posts;";
+	send_to_parser(command1);
+	updatePosts();
+
+	string command2 = "SHOW posts;";
+	send_to_parser(command2);
 }
-void Weblog::editContent(){
+void Weblog::editContent(Post current){
+	string input;
 
+	cout << "Enter the new Content: ";
+	read_string(input);
+
+	
+	string command = "UPDATE posts SET content = \"" + input + "\" WHERE id == \""+current.getId()+"\" ;";
+	cout << command;
+	cin>>input;
+	send_to_parser(command);
+
+
+	string command1 = "WRITE posts;";
+	send_to_parser(command1);
+	updatePosts();
+
+	string command2 = "SHOW posts;";
+	send_to_parser(command2);
 }
-void Weblog::editTags(){
+void Weblog::editTags(Post current){
+	string input;
 
+	cout << "Enter the new Tags: ";
+	read_string(input);
+
+	
+	string command = "UPDATE posts SET tags = \"" + input + "\" WHERE id == \""+current.getId()+"\" ;";
+	cout << command;
+	cin>>input;
+	send_to_parser(command);
+
+
+	string command1 = "WRITE posts;";
+	send_to_parser(command1);
+	updatePosts();
+
+	string command2 = "SHOW posts;";
+	send_to_parser(command2);
 }
 
 void Weblog::toggleComments(){
@@ -205,101 +425,219 @@ void Weblog::deletePost(){
 void Weblog::searchAuthor(){
 	//Get user input
  
-	//temporary substitute for string of user input
 	string user;
 
 	cout << "Enter the author: ";
 	read_string(user);
 	//
 	string command = "temp_author <- select (author == \"" + user + "\") posts;";
-	//cout <<command;
 	send_to_parser(command);
-	Relation buffer = p.db.getRelation("temp_author");
-	vector< <vector<Entry>> records;
 	
-	//vector<Entry> v = ;
+	Relation buffer = p.db.getRelation("temp_author");
+	vector< vector<Entry> > Records;
 
+	Attribute title,authors, content, tags, date, ids; 
+	//cout<<buffer.attributes.size()<<'\n';
+	if (buffer.getAttribute("author").getNumEntries() > 0){
+
+		title = buffer.getAttribute("title");
+		authors = buffer.getAttribute("author");
+		content = buffer.getAttribute("content");
+		tags = buffer.getAttribute("tags");
+		date = buffer.getAttribute("date");
+		ids = buffer.getAttribute("id");
+		for(int i = 0; i < buffer.getAttribute("author").getNumEntries(); i++){
+			vector<Entry> temp;
+			temp.push_back(title.getEntry(i));
+			temp.push_back(authors.getEntry(i));
+			temp.push_back(content.getEntry(i));
+			temp.push_back(tags.getEntry(i));
+			temp.push_back(date.getEntry(i));
+			temp.push_back(ids.getEntry(i));
+			Records.push_back(temp);
+		}
+
+		for (int i =0; i < Records.size(); i++){
+			
+			//Display date and title
+			cout << i << ": " << Records[i][0] << Records[i][4];
+		}
+	}
+
+	string choice;
+	int index;
+	cout<<"Enter the Record number: ";
+	read_string(choice);
+	index = stoi(choice);
+	string desiredID = Records[index][5].getData();
+	Post post = getPost(desiredID);
+	func_menu(post);
 }
 void Weblog::searchTitle(){
 
 
 	string user;
-	cout << "Enter the title: ";
+
+	cout << "Enter the Title: ";
 	read_string(user);
 	//
 	string command = "temp_title <- select (title == \"" + user + "\") posts;";
-
 	send_to_parser(command);
+	
+	Relation buffer = p.db.getRelation("temp_title");
+	vector< vector<Entry> > Records;
+
+	Attribute title,authors, content, tags, date, ids; 
+	//cout<<buffer.attributes.size()<<'\n';
+	if (buffer.getAttribute("author").getNumEntries() > 0){
+
+		title = buffer.getAttribute("title");
+		authors = buffer.getAttribute("author");
+		content = buffer.getAttribute("content");
+		tags = buffer.getAttribute("tags");
+		date = buffer.getAttribute("date");
+		ids = buffer.getAttribute("id");
+		for(int i = 0; i < buffer.getAttribute("author").getNumEntries(); i++){
+			vector<Entry> temp;
+			temp.push_back(title.getEntry(i));
+			temp.push_back(authors.getEntry(i));
+			temp.push_back(content.getEntry(i));
+			temp.push_back(tags.getEntry(i));
+			temp.push_back(date.getEntry(i));
+			temp.push_back(ids.getEntry(i));
+			Records.push_back(temp);
+		}
+
+		for (int i =0; i < Records.size(); i++){
+			
+			//Display date and title
+			cout << i << ": " << Records[i][0] << Records[i][1];
+		}
+	}
+
+	string choice;
+	int index;
+	//If multiple records are displayed this allows the user to select which one.
+	cout<<"Enter the Record number: ";
+	read_string(choice);
+	index = stoi(choice);
+	//The 5 is an unaviodable magic constant that corresponds to the id from parser.
+	string desiredID = Records[index][5].getData();
+	Post post = getPost(desiredID);
+	func_menu(post);
 }
 void Weblog::searchTags(){
 
 	string user;
-	cout << "Enter the tags: ";
+
+	cout << "Enter the Tags: ";
 	read_string(user);
 	//
-	string command = "temp_tags <- select (author == \"" + user + "\") posts;";
+	string command = "temp_tags <- select (tags == \"" + user + "\") posts;";
 	send_to_parser(command);
+	
+	Relation buffer = p.db.getRelation("temp_tags");
+	vector< vector<Entry> > Records;
+
+	Attribute title,authors, content, tags, date, ids; 
+	//cout<<buffer.attributes.size()<<'\n';
+	if (buffer.getAttribute("author").getNumEntries() > 0){
+
+		title = buffer.getAttribute("title");
+		authors = buffer.getAttribute("author");
+		content = buffer.getAttribute("content");
+		tags = buffer.getAttribute("tags");
+		date = buffer.getAttribute("date");
+		ids = buffer.getAttribute("id");
+		for(int i = 0; i < buffer.getAttribute("author").getNumEntries(); i++){
+			vector<Entry> temp;
+			temp.push_back(title.getEntry(i));
+			temp.push_back(authors.getEntry(i));
+			temp.push_back(content.getEntry(i));
+			temp.push_back(tags.getEntry(i));
+			temp.push_back(date.getEntry(i));
+			temp.push_back(ids.getEntry(i));
+			Records.push_back(temp);
+		}
+
+		for (int i =0; i < Records.size(); i++){
+			
+			//Display date and title
+			cout << i << ": " << Records[i][0] << Records[i][4];
+		}
+	}
+
+	string choice;
+	int index;
+	cout<<"Enter the Record number: ";
+	read_string(choice);
+	index = stoi(choice);
+	string desiredID = Records[index][5].getData();
+	Post post = getPost(desiredID);
+	func_menu(post);
 }
+
 void Weblog::searchDate(){
 	
 	string user;
-	cout << "Enter the date: ";
+
+	cout << "Enter the Date (Must match exactly: ";
 	read_string(user);
 	//
-	string command = "temp_date <- select (author == \"" + user + "\") posts;";
+	string command = "temp_date <- select (date == \"" + user + "\") posts;";
 	send_to_parser(command);
+	
+	Relation buffer = p.db.getRelation("temp_date");
+	vector< vector<Entry> > Records;
+
+	Attribute title,authors, content, tags, date, ids; 
+	//cout<<buffer.attributes.size()<<'\n';
+	if (buffer.getAttribute("author").getNumEntries() > 0){
+
+		title = buffer.getAttribute("title");
+		authors = buffer.getAttribute("author");
+		content = buffer.getAttribute("content");
+		tags = buffer.getAttribute("tags");
+		date = buffer.getAttribute("date");
+		ids = buffer.getAttribute("id");
+		for(int i = 0; i < buffer.getAttribute("author").getNumEntries(); i++){
+			vector<Entry> temp;
+			temp.push_back(title.getEntry(i));
+			temp.push_back(authors.getEntry(i));
+			temp.push_back(content.getEntry(i));
+			temp.push_back(tags.getEntry(i));
+			temp.push_back(date.getEntry(i));
+			temp.push_back(ids.getEntry(i));
+			Records.push_back(temp);
+		}
+
+		for (int i =0; i < Records.size(); i++){
+			
+			//Display date and title
+			cout << i << ": " << Records[i][0] << Records[i][4];
+		}
+	}
+
+	string choice;
+	int index;
+	cout<<"Enter the Record number: ";
+	read_string(choice);
+	index = stoi(choice);
+	string desiredID = Records[index][5].getData();
+	Post post = getPost(desiredID);
+	func_menu(post);
 }
 
-//This function should probably write a copy of the app to disk!
-// void Weblog::exitApp(){
 
-// 	string command = "WRITE posts";
-// 	send_to_parser(command);
-// }
 
 void Weblog::send_to_parser(string command) {
 	p.parse(command);
 	
 }
 
-string Weblog::getOutput(string command){
-	//int child = fork();
-	//if(child)
-}
 
-vector<string> Weblog::getAllFilesInFolder(string fileName){
-	//returns all the names of the files of relations on the disk
-	vector<string> files;
-	string relationName;
-	ifstream relationFile(fileName);
-	if (relationFile.is_open()){
-		while (getline(relationFile, relationName)){
-			files.push_back(relationName);
-		}
-		relationFile.close();
-	}
-	else{
-		//cout << "Error in getAllFilesInFolder() :: \"Relations.db\" is not in the current folder." << endl;
-		//cout << "You may Create relations but there are no relations to read." << endl;
-	}
 
-	return files;
-}
 
-bool Weblog::isOnDisk(string rName, vector<string> relationsOnDisk){
-	//Checks if the relation is already on the disk
-	//returns true if it is already on disk false otherwise
-	for (int i = 0; i < relationsOnDisk.size(); ++i){
-		if (relationsOnDisk[i] == rName){
-			return true;
-		}
-	}
-	return false;
-}
-
-void Weblog::setViewBuffer(){
-	//string buffer = 
-}
 
 
 int main(int argc, char * argv[] ){

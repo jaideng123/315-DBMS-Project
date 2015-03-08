@@ -8,15 +8,18 @@ class Relation
 {
 private:
 	string relationName;
-	vector<Attribute> attributes;
+	
 	vector<string> primaryKeys;
+	
 	vector<vector<Entry> > tuples; //tuples of the relation
-
+	vector<Attribute> attributes;
 public:
 	Relation();
 	Relation(string name);
 	Relation(string name, vector<string> keys);
 	~Relation();
+	
+	//int getSize(){ return this->attributes[0].entries.size(); }
 
 	/* ================= Helper Functions ==================== */
 

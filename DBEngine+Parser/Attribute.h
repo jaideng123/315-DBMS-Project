@@ -9,7 +9,7 @@ class Attribute
 {
 private:
 	string attributeName;//can be an integer or string
-	vector<Entry> entries;
+	
 
 	int maxLength = 0;//how long the Entries in a certain attribute can be
 
@@ -18,6 +18,7 @@ public:
 	Attribute(string name);
 	Attribute(string name, int max);
 	~Attribute();
+	vector<Entry> entries;
 
 	void setName(string attName) { attributeName = attName; }
 	void addEntry(string entData);

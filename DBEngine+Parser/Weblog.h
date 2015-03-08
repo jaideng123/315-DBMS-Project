@@ -3,7 +3,8 @@
 
 //#include "Headers.h"
 #include "Parser.h"
-
+#include "Post.h"
+#include <ctime>
 // #include <stdio.h>
 // #include <unistd.h>
 // #include <stdlib.h>
@@ -19,17 +20,21 @@ public:
 	
 	//Update DB functions
 	void makePost();
-	void makeComment();
+	void makeComment(Post current);
 
+	Post getPost(string id);
+	void updatePosts();
+	//NOTE - DOES NOT RETURN THE ID MAKES NEW ONE!!!!!!!!!
+	string getId();	//generates an ID number
+	
+	string getDate();
 	void send_to_parser(string command);
-	void view();
-	string getOutput(string command);
-
+		
 	//Edit DB functions
-	void editTitle();			//
-	void editAuthor();
-	void editContent();
-	void editTags();
+	void editTitle(Post current);			//
+	void editAuthor(Post current);
+	void editContent(Post current);
+	void editTags(Post current);
 
 	void toggleComments();
 
@@ -42,28 +47,20 @@ public:
 	void searchTags();
 	void searchDate();
 
-	//Helper Functions
-	void setViewBuffer();
-
-	void main_menu();
-	void search_menu();
-	void func_menu();
-
- 	//This function should probably write a copy of the app to disk!
-	void exitApp();
-
-	bool isOnDisk(string rName, vector<string> relationsOnDisk);
-	vector<string> getAllFilesInFolder(string fileName);
-
-private:
-	Parser p;
-	vector <vector<string> > viewBuffer;
 
 	//Menu Functions
-	//void main_menu();
-	//void post_menu();
-	//void search_menu();
+	void main_menu();
+	void search_menu();
+	void func_menu(Post current);
+	void edit_menu(Post current);
 
+
+	
+private:
+	Parser p;
+
+	vector< Post > records;
+	
 
 };
 

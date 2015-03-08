@@ -117,7 +117,7 @@ Token Token_stream::get(){
 			}
 			else{ isLiteral = true; }
 			if (isLiteral){
-				while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_' || ch == '"' || isspace(ch)) || ch == '/' || ch == '.'){
+				while (cin.get(ch) && (isalpha(ch) || isdigit(ch) || ch == '_' || ch == '"' || isspace(ch)) || ch == '/' || ch == '.' || ch == ':'){
 					if (ch != '"'){
 						s += ch;
 					}

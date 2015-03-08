@@ -1,8 +1,9 @@
 posts
-title,author
-title,30,
-author,30,
-content,140,
-tags,100,
-date,14,
-
+id,
+title,1000,First,Cool,
+author,1000,Eric,Eric,
+content,1400,This is the first try.,Im feeling better about this.,
+tags,1000,test,cool,
+date,1400,,Sun Mar  8 04:15:05 2015
+,
+id,1000,a281154453,a281154155,
