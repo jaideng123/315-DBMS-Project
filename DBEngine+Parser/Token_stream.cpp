@@ -121,6 +121,10 @@ Token Token_stream::get(){
 					if (ch != '"'){
 						s += ch;
 					}
+					else if(ch =='"'){
+						cin.get(ch);
+						break;
+					}
 				}
 			}
 			else{

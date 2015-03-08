@@ -28,7 +28,7 @@ Weblog::Weblog(){
 	
 }
 
-string Weblog::getId(){
+string Weblog::generateId(){
 	string date;
 	time_t raw = time(0);
 	tm * ltm = localtime(&raw);
@@ -78,7 +78,7 @@ void Weblog::makePost(){
 	
 	//Set time
 	date = getDate();
-	string id = getId();
+	string id = generateId();
 
 	string input = "INSERT INTO posts VALUES FROM (\"" + title + "\", \"" + author + "\", \"" + content + "\", \"" + tags + "\", \"" + date + "\", \"" + id + "\") ;"; 
 	send_to_parser(input);
@@ -231,7 +231,7 @@ void Weblog::func_menu(Post current){
 		
 	}
 	else if(choice == 3){
-
+		deletePost(current);
 		
 	}
 	else if(choice == 4){
@@ -314,7 +314,7 @@ void Weblog::makeComment(Post current){
 	read_string(author);
 	cout<<"Enter your comment: ";
 	read_string(comment);
-	id = getId();
+	id = generateId();
 
 
 	string insert = "INSERT INTO "+current.getId()+" VALUES FROM (\"" + date + "\", \"" + author + "\", \"" + comment + "\", \"" + id + "\") ;"; 
@@ -334,7 +334,7 @@ void Weblog::editTitle(Post current){
 	read_string(input);
 
 	
-	string command = "UPDATE posts SET title = \"" + input + "\" WHERE id == \""+current.getId()+"\" ;";
+	string command = "UPDATE posts SET title = \"" + input + "\" WHERE title == \""+current.getTitle()+"\" ;";
 	cout << command;
 	cin>>input;
 	send_to_parser(command);
@@ -355,7 +355,7 @@ void Weblog::editAuthor(Post current){
 	read_string(input);
 
 	
-	string command = "UPDATE posts SET author = \"" + input + "\" WHERE (id == \""+current.getId()+"\" ) ;";
+	string command = "UPDATE posts SET author = \"" + input + "\" WHERE (author == \""+current.getAuthor()+"\" ) ;";
 	cout << command;
 	cin>>input;
 	send_to_parser(command);
@@ -414,7 +414,14 @@ void Weblog::toggleComments(){
 }
 
 //This will also delete associated comments
-void Weblog::deletePost(){
+void Weblog::deletePost(Post current){
+	string deleteCommand = "DELETE FROM posts WHERE id == \""+current.getId()+"\" ;";
+	cout<<deleteCommand<<"\n";
+	send_to_parser(deleteCommand);
+	send_to_parser("WRITE posts ;");
+		
+	p.db.removeRelationFromDisk(current.getId());
+	updatePosts();
 
 }
 

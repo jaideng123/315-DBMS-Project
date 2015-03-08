@@ -25,7 +25,7 @@ public:
 	Post getPost(string id);
 	void updatePosts();
 	//NOTE - DOES NOT RETURN THE ID MAKES NEW ONE!!!!!!!!!
-	string getId();	//generates an ID number
+	string generateId();	//generates an ID number
 	
 	string getDate();
 	void send_to_parser(string command);
@@ -39,7 +39,7 @@ public:
 	void toggleComments();
 
 	//This will also delete associated comments
-	void deletePost();
+	void deletePost(Post current);
 
 	//Search functions
 	void searchAuthor();
