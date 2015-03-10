@@ -10,10 +10,9 @@ private:
 	string relationName;
 	
 	vector<string> primaryKeys;
-	
-	vector<vector<Entry> > tuples; //tuples of the relation
-	vector<Attribute> attributes;
 public:
+	vector<Attribute> attributes;
+	vector<vector<Entry> > tuples; //tuples of the relation
 	Relation();
 	Relation(string name);
 	Relation(string name, vector<string> keys);

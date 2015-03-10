@@ -468,18 +468,13 @@ string Parser::query(){
 	Token t = ts.get();
 	switch(t.kind){
 	case qu:
-		if ((!db.relationExists(relName)) && (!db.isOnDisk(relName))){
 			//if the relation already exists then dont do unnecessary stuff
 			db.createRelation(relName);
 			newRelName = expression();
 			rel = db.getRelation(newRelName);
 			db.getRelation(relName).getAttributes() = rel.getAttributes();
 			db.cleanUp(cleanUpNames);//to get rid of the temporary relations
-		}
-		else{
-			ts.get();
-			cout << "Error : Relation already Exists." << endl;
-		}
+
 		break;
 	default:
 		cout << "Error :: Expected a '<-' for a query.";

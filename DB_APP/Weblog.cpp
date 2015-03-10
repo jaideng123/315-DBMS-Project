@@ -148,7 +148,6 @@ void Weblog::search_menu(){
 		cout << "* Enter command: ";
 		
 		cin >> choice;
-
 		if(choice == 1){
 
 			searchAuthor();
@@ -231,7 +230,7 @@ void Weblog::func_menu(Post current){
 		}
 		else if(choice == 3){
 			deletePost(current);
-			
+			choice = 5;
 		}
 		else if(choice == 4){
 
@@ -357,7 +356,7 @@ void Weblog::makeComment(Post current){
 	send_to_parser(insert);
 
 	//Save Changes
-	string write = "WRITE " + current.getId();
+	string write = "WRITE " + current.getId() + ";";
 	send_to_parser(write);
 
 }
@@ -455,8 +454,8 @@ void Weblog::deletePost(Post current){
 	string deleteCommand = "DELETE FROM posts WHERE id == \"" + current.getId() + "\" ;";
 	send_to_parser(deleteCommand);
 	send_to_parser("WRITE posts;");
-		
-	p.db.removeRelationFromDisk(current.getId());
+	if(p.db.isOnDisk(current.getId()))
+		p.db.removeRelationFromDisk(current.getId());
 	updatePosts();
 
 }
@@ -467,18 +466,15 @@ void Weblog::searchAuthor(){
 	//Get user input
  
 	string user;
-
 	cout << "Enter the author: ";
 	read_string(user);
-
 	string command = "temp_author <- select (author == \"" + user + "\") posts;";
 	send_to_parser(command);
-	
 	Relation buffer = p.db.getRelation("temp_author");
+	send_to_parser("SHOW temp_author;");
 	vector< vector<Entry> > Records;
-
+	send_to_parser("CLOSE temp_author;");
 	Attribute title,authors, content, tags, date, ids; 
-
 	if (buffer.getAttribute("author").getNumEntries() > 0){
 
 		title = buffer.getAttribute("title");
@@ -489,7 +485,6 @@ void Weblog::searchAuthor(){
 		ids = buffer.getAttribute("id");
 		
 		for(int i = 0; i < buffer.getAttribute("author").getNumEntries(); i++){
-			
 			vector<Entry> temp;
 			temp.push_back(title.getEntry(i));
 			temp.push_back(authors.getEntry(i));
@@ -499,7 +494,7 @@ void Weblog::searchAuthor(){
 			temp.push_back(ids.getEntry(i));
 			Records.push_back(temp);
 		}
-
+		
 		for (int i =0; i < Records.size(); i++){
 			
 			//Display date and title
