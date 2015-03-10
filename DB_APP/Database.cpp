@@ -48,7 +48,9 @@ void Database::removeRelation(string rName){
 	//removes a relation from memory
 	for (int i = 0; i < relations.size(); ++i){
 		if (relations[i].getName() == rName){
+			cout<<relations[i];
 			relations.erase(relations.begin() + i);
+			cout<<"here \n";
 			return;
 		}
 	}
