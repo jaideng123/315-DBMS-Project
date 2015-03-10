@@ -90,6 +90,7 @@ bool Relation::attributeExists(string attName){
 
 vector<vector<Entry> > Relation::selection(string entryValue, char condition, string attName){
 	//return only the tuples that have the given entry value
+	tuples.clear();
 	this->setTuples();
 	vector<vector<Entry> > selectTuples;
 	int spot = 0;

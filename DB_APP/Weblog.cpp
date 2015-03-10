@@ -17,7 +17,7 @@ Weblog::Weblog(){
 		updatePosts();
 	}
 	else{
-		p.parse("CREATE TABLE posts (title VARCHAR(1000) , author VARCHAR(1000) , content VARCHAR(1400) , tags VARCHAR(1000) , date VARCHAR(1400) , id VARCHAR(1000), comment_on_off VARCHAR(1000) ) PRIMARY KEY (id) ;");
+		p.parse("CREATE TABLE posts (title VARCHAR(20) , author VARCHAR(20) , content VARCHAR(20) , tags VARCHAR(20) , date VARCHAR(20) , id VARCHAR(20), comment_on_off VARCHAR(20) ) PRIMARY KEY (id) ;");
 		p.parse("WRITE posts;");
 	}
 }
@@ -473,7 +473,8 @@ void Weblog::searchAuthor(){
 	Relation buffer = p.db.getRelation("temp_author");
 	send_to_parser("SHOW temp_author;");
 	vector< vector<Entry> > Records;
-	send_to_parser("CLOSE temp_author;");
+	p.db.removeRelation("temp_author");
+	//send_to_parser("CLOSE temp_author;");
 	Attribute title,authors, content, tags, date, ids; 
 	if (buffer.getAttribute("author").getNumEntries() > 0){
 

@@ -463,7 +463,7 @@ string Parser::comparison(string rName){
 string Parser::query(){
 	string relName = relationName();
 	string newRelName;
-	Relation rel;
+	//Relation rel;
 	
 	Token t = ts.get();
 	switch(t.kind){
@@ -471,10 +471,8 @@ string Parser::query(){
 			//if the relation already exists then dont do unnecessary stuff
 			db.createRelation(relName);
 			newRelName = expression();
-			rel = db.getRelation(newRelName);
-			db.getRelation(relName).getAttributes() = rel.getAttributes();
+			db.getRelation(relName).getAttributes() = db.getRelation(newRelName).getAttributes();
 			db.cleanUp(cleanUpNames);//to get rid of the temporary relations
-
 		break;
 	default:
 		cout << "Error :: Expected a '<-' for a query.";
