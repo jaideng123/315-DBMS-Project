@@ -25,6 +25,7 @@ public:
 	void addEntry(Entry ent);
 	void removeEntry(string entData);
 	void removeEntry(int index);
+	void setMaxLength(int length) { this->maxLength = length; }
 
 	int getNumEntries() { return entries.size(); }
 	int getMaxLength() { return this->maxLength; }

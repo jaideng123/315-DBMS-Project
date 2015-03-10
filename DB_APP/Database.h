@@ -39,7 +39,7 @@ public:
 
 	void handleInput(string fileName);
 	void inputKeys(string fileLine, string rName);
-	void parseFileInput(string fileLine, string rName);
+	void parseFileInput(string fileLine, string rName, int lineNum);
 	void relationToFile(string rName);
 
 	/* ======================================================= */

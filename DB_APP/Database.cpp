@@ -48,9 +48,7 @@ void Database::removeRelation(string rName){
 	//removes a relation from memory
 	for (int i = 0; i < relations.size(); ++i){
 		if (relations[i].getName() == rName){
-			cout<<relations[i];
 			relations.erase(relations.begin() + i);
-			cout<<"here \n";
 			return;
 		}
 	}
@@ -171,9 +169,41 @@ void Database::writeRelation(string rName){
 }
 
 void Database::showRelation(string rName){
-	//prints the relation to the screen if it exists in memory
+	/*//prints the relation to the screen if it exists in memory
 	if (this->relationExists(rName)){
 		cout << this->getRelation(rName);
+	}
+	else{
+		cout << "Error in showRelation() :: Relation is not in memory." << endl;
+	}*/
+	//prints the relation to the screen if it exists in memory
+	Relation currentRelation = this->getRelation(rName);
+	int numAttributes = currentRelation.getNumAttributes();
+	int numEntries = currentRelation.getAttribute(0).getNumEntries();
+	if (this->relationExists(rName)){
+		cout << "RELATION NAME :: " << rName << endl;
+		cout << "PRIMARY KEYS :: ";
+		for (int i = 0; i < this->getRelation(rName).getNumKeys(); ++i){
+			cout << this->getRelation(rName).getKey(i) << " | ";
+		}
+		cout << endl << endl;
+		for (int i = 0; i < numAttributes; ++i){
+			cout << setw(currentRelation.getAttribute(i).getMaxLength()) << left << " " + currentRelation.getAttribute(i).getName() << " |";
+		}
+		cout << endl << endl;
+		//entries
+		for (int i = 0; i < numEntries; ++i){
+			for (int k = 0; k < numAttributes; ++k){
+				if (currentRelation.getAttribute(k).getMaxLength() != -1){
+					cout << setw(currentRelation.getAttribute(k).getMaxLength()) << left << " " + currentRelation.getAttribute(k).getEntry(i).getData() << " |";
+				}
+				else{
+					cout << setw(currentRelation.getAttribute(k).getName().length() + 1) << left << " " + currentRelation.getAttribute(k).getEntry(i).getData() << " |";
+				}
+			}
+			cout << endl;
+		}
+		cout << endl;
 	}
 	else{
 		cout << "Error in showRelation() :: Relation is not in memory." << endl;
@@ -298,7 +328,7 @@ void Database::deleteAttsFromRelation(string rName, string condrName){
 /* ===================== Input/Output Functions ============================ */
 
 void Database::handleInput(string fileName){
-	ifstream currentFile(fileName);
+	/*ifstream currentFile(fileName);
 	string line;
 	if (currentFile.is_open()){
 		getline(currentFile, line);//gets first line in file which is the relation name
@@ -313,22 +343,46 @@ void Database::handleInput(string fileName){
 	}
 	else{
 		cout << "Error in handleInput() :: No file to open." << endl;
+	}*/
+	ifstream currentFile(fileName);
+	string line;
+	int lineNumber = 1;
+	if (currentFile.is_open()){
+		getline(currentFile, line);//gets first line in file which is the relation name
+		string curRel = line;
+		this->relations.push_back(Relation(curRel));
+		while (getline(currentFile, line)){
+			parseFileInput(line, curRel, lineNumber); //handles attributes and their entries
+			++lineNumber;
+		}
+		currentFile.close();
+	}
+	else{
+		cout << "Error in handleInput() :: No file to open." << endl;
 	}
 }
 
 void Database::inputKeys(string fileLine, string rName){
-	string token = "";
+	/*string token = "";
 	string curKey;
 	while (fileLine != token && fileLine != ""){
 		token = fileLine.substr(0, fileLine.find_first_of(","));
 		fileLine = fileLine.substr(fileLine.find_first_of(",") + 1);
 		curKey = token;
 		this->getRelation(rName).addKey(curKey);
+	}*/
+	string token = "";
+	string curKey;
+	while (fileLine != token && fileLine != ""){
+		token = fileLine.substr(0, fileLine.find_first_of("|"));
+		fileLine = fileLine.substr(fileLine.find_first_of("|") + 1);
+		curKey = token;
+		this->getRelation(rName).addKey(curKey);
 	}
 }
 
-void Database::parseFileInput(string fileLine, string rName){
-	string token = "";
+void Database::parseFileInput(string fileLine, string rName, int lineNum){
+	/*string token = "";
 	string curAtt;
 	stringstream ss;
 	int attType = -2;//invalid attType
@@ -351,11 +405,123 @@ void Database::parseFileInput(string fileLine, string rName){
 		else{
 			this->getRelation(rName).getAttribute(curAtt).addEntry(token);
 		}
+	}*/
+	string token = "";
+	string curAtt = "";
+	stringstream ss;
+	int attType = -2;//invalid attType
+	int spot = 0;
+	int isspacecounter = 0;
+	int chcnt = 1;
+	char ch;
+
+	if (lineNum == 1){
+		streambuf* orig = cin.rdbuf();
+		istringstream input(fileLine);
+		cin.rdbuf(input.rdbuf());
+		while (cin.get(ch)){
+			if (ch != '|' && (chcnt > 1)){
+				if (isspace(ch)){ isspacecounter++; }
+				if (isspacecounter < 2){
+					curAtt += ch;
+				}
+			}
+			else if (ch == '|'){
+				if (curAtt.substr(curAtt.length() - 1, curAtt.length()) == " "){
+					curAtt = curAtt.substr(0, curAtt.length() - 1);
+				}
+				this->getRelation(rName).addKey(curAtt);
+				chcnt = 0;
+				isspacecounter = 0;
+				curAtt = "";
+			}
+			chcnt++;
+		}
+		cin.rdbuf(orig);
+	}
+	else if (lineNum == 2){
+		streambuf* orig = cin.rdbuf();
+		istringstream input(fileLine);
+		cin.rdbuf(input.rdbuf());
+		while (cin.get(ch)){
+			if (ch != '|' && (chcnt > 1)){
+				if (isspace(ch)){ isspacecounter++; }
+				if (isspacecounter < 2){
+					curAtt += ch;
+				}
+			}
+			else if (ch == '|'){
+				if (curAtt.substr(curAtt.length() - 1, curAtt.length()) == " "){
+					curAtt = curAtt.substr(0, curAtt.length() - 1);
+				}
+				this->getRelation(rName).addAttribute(curAtt, 0);
+				chcnt = 0;
+				isspacecounter = 0;
+				curAtt = "";
+			}
+			chcnt++;
+		}
+		cin.rdbuf(orig);
+	}
+	else if (lineNum == 3){
+		streambuf* orig = cin.rdbuf();
+		istringstream input(fileLine);
+		cin.rdbuf(input.rdbuf());
+		while (cin.get(ch)){
+			if (ch != '|' && (chcnt > 1)){
+				if (isspace(ch)){ isspacecounter++; }
+				if (isspacecounter < 2){
+					curAtt += ch;
+				}
+			}
+			else if (ch == '|'){
+				if (curAtt.substr(curAtt.length() - 1, curAtt.length()) == " "){
+					curAtt = curAtt.substr(0, curAtt.length() - 1);
+				}
+				ss.str(curAtt);
+				ss >> attType;
+				ss.str("");
+				ss.clear();
+				this->getRelation(rName).getAttribute(spot).setMaxLength(attType);
+				spot++;
+				chcnt = 0;
+				isspacecounter = 0;
+				curAtt = "";
+			}
+			chcnt++;
+		}
+		cin.rdbuf(orig);
+	}
+	else{
+		streambuf* orig = cin.rdbuf();
+		istringstream input(fileLine);
+		cin.rdbuf(input.rdbuf());
+		while (cin.get(ch)){
+			if (ch != '|' && (chcnt > 1)){
+				if (isspace(ch)){ isspacecounter++; }
+				if (isspacecounter < 2){
+					curAtt += ch;
+				}
+			}
+			else if (ch == '|'){
+				if (curAtt.substr(curAtt.length() - 1, curAtt.length()) == " "){
+					curAtt = curAtt.substr(0, curAtt.length() - 1);
+				}
+				this->getRelation(rName).getAttribute(spot).addEntry(curAtt);
+				spot++;
+				chcnt = 0;
+				isspacecounter = 0;
+				curAtt = "";
+			}
+			
+			chcnt++;
+		}
+		cin.rdbuf(orig);
 	}
 }
 
 void Database::relationToFile(string rName){
-	//This function prints the relation and its contents
+	/*//This function prints the relation and its contents
 	//to the file in readable format for openRelation() function
 	ofstream outputFile(rName + ".db");
 	Relation currentRelation = this->getRelation(rName);
@@ -374,6 +540,53 @@ void Database::relationToFile(string rName){
 				outputFile << currentRelation.getAttribute(i).getEntry(k).getData();
 				if (k != (numEntries)){
 					outputFile << ",";
+				}
+			}
+			outputFile << endl;
+		}
+		outputFile.close();
+	}
+	else{
+		cout << "Error in relationToFile() :: No file to open." << endl;
+	}*/
+	//This function prints the relation and its contents
+	//to the file in readable format for openRelation() function
+	ofstream outputFile(rName + ".db");
+	Relation currentRelation = this->getRelation(rName);
+	int numAttributes = currentRelation.getNumAttributes();
+	int numEntries = currentRelation.getAttribute(0).getNumEntries();
+	if (outputFile.is_open()){
+		outputFile << rName << endl;
+		for (int j = 0; j < currentRelation.getNumKeys(); ++j){
+			outputFile << " " + currentRelation.getKey(j) << " |";
+		}
+		outputFile << endl;
+		//attributes
+		for (int i = 0; i < numAttributes; ++i){
+				outputFile << setw(currentRelation.getAttribute(i).getMaxLength()) << left << " " + currentRelation.getAttribute(i).getName() << " |";
+		}
+		outputFile << endl;
+		//maxlength
+		for (int i = 0; i < numAttributes; ++i){
+			outputFile << " ";
+			if (currentRelation.getAttribute(i).getMaxLength() != -1){
+				int max = currentRelation.getAttribute(i).getMaxLength();
+				outputFile << std::setw(max) << std::left << currentRelation.getAttribute(i).getMaxLength() << "|";
+			}
+			else{
+				int max = currentRelation.getAttribute(i).getName().length() + 1;
+				outputFile << std::setw(max) << std::left << currentRelation.getAttribute(i).getMaxLength() << "|";
+			}
+		}
+		outputFile << endl;
+		//entries
+		for (int i = 0; i < numEntries; ++i){
+			for (int k = 0; k < numAttributes; ++k){
+				if (currentRelation.getAttribute(k).getMaxLength() != -1){
+					outputFile << setw(currentRelation.getAttribute(k).getMaxLength()) << left << " " + currentRelation.getAttribute(k).getEntry(i).getData() << " |";
+				}
+				else{
+					outputFile << setw(currentRelation.getAttribute(k).getName().length() + 1) << left << " " + currentRelation.getAttribute(k).getEntry(i).getData() << " |";
 				}
 			}
 			outputFile << endl;
