@@ -334,7 +334,7 @@ void Weblog::makeComment(Post current){
 	if(!(p.db.isOnDisk(current.getId())) ){
 		
 		string makeCommentTable = "CREATE TABLE "+ current.getId() +
-				" (date VARCHAR(1000) , author VARCHAR(1000) , content VARCHAR(1400) , ids VARCHAR(1000) ) PRIMARY KEY (ids) ;";
+				" (date VARCHAR(12) , author VARCHAR(50) , content VARCHAR(100) , ids VARCHAR(50) ) PRIMARY KEY (ids) ;";
 		send_to_parser(makeCommentTable);
 	}
 	else{
